@@ -25,11 +25,17 @@ export class PageLecteurComponent implements OnInit {
         this.index++
         break;
       case 2:
-        this.index--;
+        if(this.index>0){
+          this.index--;
+        }
+        else{
+          alert('Pas de page précédente')
+        }
         break;
     }
     this.imageAEnvoyer = this.listeImages[this.index];
     console.log(this.imageAEnvoyer);
+    window.scrollTo(0,0)
   }
 
   lirePageSuivante(){

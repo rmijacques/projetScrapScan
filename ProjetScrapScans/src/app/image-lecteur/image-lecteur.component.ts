@@ -1,4 +1,4 @@
-import { Component, OnInit , Input } from '@angular/core';
+import { Component, OnInit , Input , Output , EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-image-lecteur',
@@ -6,12 +6,16 @@ import { Component, OnInit , Input } from '@angular/core';
   styleUrls: ['./image-lecteur.component.scss']
 })
 export class ImageLecteurComponent implements OnInit {
+  @Output() action = new EventEmitter<number>();
   @Input() src : string;
  
   constructor() { }
 
   ngOnInit() {
     
+  }
+  nextPage(){
+    this.action.emit(1);
   }
 
 }

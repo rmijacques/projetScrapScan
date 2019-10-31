@@ -3,6 +3,6 @@
         <app-left-menu-lecteur (action)="onPageChange($event)" [numPage]="index+1"></app-left-menu-lecteur>
     </div>
     <div style="grid-column:2 / 11;border : 2px solid black;height: 100%;" id="lecteur">
-        <app-image-lecteur  [src]="imageAEnvoyer"></app-image-lecteur>
+        <app-image-lecteur  [src]="imageAEnvoyer" (action)="onPageChange($event)"></app-image-lecteur>
     </div>
 </div>
