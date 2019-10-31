@@ -10,8 +10,8 @@ var file = fs.readFileSync("mangas.json");
 var data = JSON.parse(file)["mangas"];
 console.log(data);
 
-for (var  i = 0; i < data.length; i++){
-    dlTools.telechargerUnScan(data[i].name, data[i].lastChapter);
-}
+
+dlTools.recupUrlsPages(data[0].name, data[0].lastChapter);
+
 
 //surveillance.recupDerniersChapitresSortis();
