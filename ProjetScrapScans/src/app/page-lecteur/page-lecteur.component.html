@@ -1,0 +1,8 @@
+<div style="display:grid; grid-template-columns: repeat(10, 1fr);height: 100%">
+    <div align="center" style = "grid-column:1; position : fixed;width:10%;display: block;" id="leftMenu" >
+        <app-left-menu-lecteur (action)="onPageChange($event)" [numPage]="index+1"></app-left-menu-lecteur>
+    </div>
+    <div style="grid-column:2 / 11;border : 2px solid black;height: 100%;" id="lecteur">
+        <app-image-lecteur  [src]="imageAEnvoyer"></app-image-lecteur>
+    </div>
+</div>
