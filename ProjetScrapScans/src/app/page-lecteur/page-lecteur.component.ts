@@ -1,28 +1,45 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-page-lecteur',
   templateUrl: './page-lecteur.component.html',
   styleUrls: ['./page-lecteur.component.scss']
 })
+
+
+@Injectable()
 export class PageLecteurComponent implements OnInit {
-  listeImages : string[] = [];
+  listeImages : string[]  = [];
   imageAEnvoyer : string;
   index : number;
-  constructor() {   }
+  constructor(private httpClient : HttpClient) { 
+
+  }
+
+  
+  async getListeUrls(){
+     this.httpClient.get<any[]>("http://localhost:8080/lecteur/Shingeki No Kyojin/122").subscribe( 
+      (reponse)=> {
+        this.listeImages = reponse;
+        this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
+      },
+      (err) => {
+       console.log(err);
+    });
+  }
 
   ngOnInit() {
-    for(let i=0;i<10;i++){
-      let j = i+1;
-      this.listeImages[i] = "https://lelscan-vf.com/uploads/manga/black-clover/chapters/227/0"+j+".png";
-    }
     this.index = 0;
-    this.imageAEnvoyer = this.listeImages[0]; 
+    this.getListeUrls();
+    this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, ''); 
   }
+
+
   onPageChange(aFaire){
     switch(aFaire){
       case 1:
-        this.index++
+        this.index++;
         break;
       case 2:
         if(this.index>0){
@@ -33,8 +50,7 @@ export class PageLecteurComponent implements OnInit {
         }
         break;
     }
-    this.imageAEnvoyer = this.listeImages[this.index];
-    console.log(this.imageAEnvoyer);
+    this.imageAEnvoyer = this.listeImages[this.index].replace(/^\s+|\s+$/g, '');
     window.scrollTo(0,0)
   }
 

@@ -5,9 +5,11 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 const request = require('request');
 var express = require('express');
+var cors= require('cors');
 
 
-var app = express();
+var app = express()
+app.use(cors())
 
 app.get('/', function(req, res) {
     res.setHeader('Content-Type', 'text/plain');
@@ -20,3 +22,4 @@ app.get('/lecteur/:mangaName/:numScan', async function(req,res){
 })
 
 app.listen(8080);
+console.log('Server running listenning on 8080 using cors');
