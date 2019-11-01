@@ -4,13 +4,13 @@
 <form (ngSubmit)="onSubmit(f)" #f="ngForm">
     <div class="form-group">
         <label for="manga">Nom du manga :</label>
-        <input type="text" id="manga" class ="form-control" name="nomManga" ngModel>
+        <input type="text" id="manga" class ="form-control" name="nomManga" style="width:90%" ngModel>
     </div>
     <div class="form-group">
         <label for="chapitre">Chapitre :</label>
-        <input type="text" id="chapitre" class="form-control" name="numChapitre" ngModel>
+        <input type="text" id="chapitre" class="form-control" name="numChapitre" style="width:90%" ngModel>
     </div>
-    <button clas="btn btn-primary" type="submit">Charger scan</button>
+    <button class="btn btn-dark" type="submit">Charger scan</button>
 </form> 
 <hr>
 <button type ="button" class="btn btn-primary" (click)="nextPage()">Page suivante</button>

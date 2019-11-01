@@ -2,7 +2,7 @@
     <div align="center" style = "grid-column:1; position : fixed;width:10%;height: 100%;display: block;border-right:1px solid black;" id="leftMenu" >
         <app-left-menu-lecteur (action)="onPageChange($event)" (mangaAChercher)="chargerNouveauScan($event)" [numPage]="index+1" [nbPages]="nbPages"></app-left-menu-lecteur>
     </div>
-    <div style="grid-column:2 / 11;height: 100%;" id="lecteur">
+    <div style="grid-column:2 / 11;" id="lecteur">
         <app-image-lecteur  [src]="imageAEnvoyer" [nomMangaEnRecherche]="mangaEnRecherche" [afficher]="rechercheTerminee" [numChap]="chapEnRecherche" (action)="onPageChange($event)"></app-image-lecteur>
     </div>
 </div>

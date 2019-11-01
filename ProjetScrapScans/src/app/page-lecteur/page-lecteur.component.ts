@@ -18,6 +18,9 @@ export class PageLecteurComponent implements OnInit {
   mangaEnRecherche : string;
   chapEnRecherche : string;
   rechercheTerminee : boolean = true;
+  manga :  string;
+  chapitre;
+
   constructor(private httpClient : HttpClient) { 
 
   }
@@ -31,13 +34,16 @@ export class PageLecteurComponent implements OnInit {
      this.httpClient.get<any[]>("http://localhost:8080/lecteur/"+manga+"/"+chapitre).subscribe( 
       (reponse)=> {
         console.log(reponse);
-        this.listeImages = reponse;
+        this.index = 0;
         if(reponse[0] === 0){
           alert('Impossible de trouver le chapitre '+chapitre+ ' de '+manga);
         }
         else{
+          this.listeImages = reponse;
           this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
-          this.nbPages = this.listeImages.length;
+          this.nbPages = this.listeImages.length-1;
+          this.manga = manga;
+          this.chapitre = chapitre;
         }
         this.rechercheTerminee = true;
       },
@@ -58,7 +64,12 @@ export class PageLecteurComponent implements OnInit {
   onPageChange(aFaire){
     switch(aFaire){
       case 1:
-        this.index++;
+        if(this.index===this.nbPages-1){
+          this.getListeUrls(this.manga,+this.chapitre + 1);
+        }
+        else{
+          this.index++;
+        }
         break;
       case 2:
         if(this.index>0){
@@ -68,6 +79,9 @@ export class PageLecteurComponent implements OnInit {
           alert('Pas de page précédente')
         }
         break;
+    }
+    if(this.index===this.nbPages){
+      this.getListeUrls(this.manga,+this.chapitre + 1);
     }
     this.imageAEnvoyer = this.listeImages[this.index].replace(/^\s+|\s+$/g, '');
     setTimeout(function(){
