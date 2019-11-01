@@ -1,14 +1,14 @@
-<img src="assets/logo.jpg" style="width:100%;height:10%;">
+<img id="logo" src="assets/logo.jpg">
 <h2 style="text-align : center;">Scrap Scan</h2>
 <hr>
 <form (ngSubmit)="onSubmit(f)" #f="ngForm">
     <div class="form-group">
         <label for="manga">Nom du manga :</label>
-        <input type="text" id="manga" class ="form-control" name="nomManga" style="width:90%" ngModel>
+        <input type="text" id="manga" class ="form-control left-menu-input" name="nomManga" ngModel>
     </div>
     <div class="form-group">
         <label for="chapitre">Chapitre :</label>
-        <input type="text" id="chapitre" class="form-control" name="numChapitre" style="width:90%" ngModel>
+        <input type="text" id="chapitre" class="form-control left-menu-input" name="numChapitre" ngModel>
     </div>
     <button class="btn btn-dark" type="submit">Charger scan</button>
 </form> 

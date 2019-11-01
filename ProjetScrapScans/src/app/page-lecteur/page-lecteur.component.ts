@@ -1,6 +1,12 @@
-import { Component, OnInit, Injectable } from '@angular/core';
+import { Component, OnInit, Injectable , HostListener } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {NgForm} from '@angular/forms';
+
+
+export enum KEY_CODE {
+  RIGHT_ARROW = 39,
+  LEFT_ARROW = 37
+}
 
 @Component({
   selector: 'app-page-lecteur',
@@ -37,6 +43,9 @@ export class PageLecteurComponent implements OnInit {
         this.index = 0;
         if(reponse[0] === 0){
           alert('Impossible de trouver le chapitre '+chapitre+ ' de '+manga);
+          if(this.listeImages.length > 0){
+            this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
+          }
         }
         else{
           this.listeImages = reponse;
@@ -59,6 +68,17 @@ export class PageLecteurComponent implements OnInit {
     console.log(recherche);
     this.getListeUrls(recherche.nomManga,recherche.numChapitre);
     this.index = 0;
+  }
+
+  @HostListener('window:keyup',['$event'])
+  keyEvent(event: KeyboardEvent){
+    if(event.keyCode === KEY_CODE.RIGHT_ARROW){
+      this.onPageChange(1);
+    }
+
+    if(event.keyCode === KEY_CODE.LEFT_ARROW){
+      this.onPageChange(2);
+    }
   }
 
   onPageChange(aFaire){
