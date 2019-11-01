@@ -46,6 +46,7 @@ module.exports = {
                 index++;
                 urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
             }
+            
             return ret;
         }
         catch(error){

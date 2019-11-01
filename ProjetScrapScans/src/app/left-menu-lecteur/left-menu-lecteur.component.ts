@@ -1,5 +1,6 @@
 import { Component, OnInit ,Output , Input} from '@angular/core';
 import { EventEmitter } from '@angular/core';
+import {NgForm} from '@angular/forms';
 
 @Component({
   selector: 'app-left-menu-lecteur',
@@ -8,7 +9,9 @@ import { EventEmitter } from '@angular/core';
 })
 export class LeftMenuLecteurComponent implements OnInit {
   @Output() action = new EventEmitter<number>();
+  @Output() mangaAChercher = new EventEmitter();
   @Input() numPage : number;
+  @Input() nbPages : number;
 
   constructor() { }
 
@@ -22,6 +25,10 @@ export class LeftMenuLecteurComponent implements OnInit {
 
   prevPage(){
     this.action.emit(2);
+  }
+
+  onSubmit(form : NgForm){
+    this.mangaAChercher.emit(form.value);
   }
 
 }

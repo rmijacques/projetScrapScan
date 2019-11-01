@@ -1,5 +1,6 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {NgForm} from '@angular/forms';
 
 @Component({
   selector: 'app-page-lecteur',
@@ -13,16 +14,32 @@ export class PageLecteurComponent implements OnInit {
   listeImages : string[]  = [];
   imageAEnvoyer : string;
   index : number;
+  nbPages : number;
+  mangaEnRecherche : string;
+  chapEnRecherche : string;
+  rechercheTerminee : boolean = true;
   constructor(private httpClient : HttpClient) { 
 
   }
 
   
-  async getListeUrls(){
-     this.httpClient.get<any[]>("http://localhost:8080/lecteur/Shingeki No Kyojin/122").subscribe( 
+  getListeUrls(manga,chapitre){
+    this.rechercheTerminee = false;
+    this.mangaEnRecherche = manga;
+    this.chapEnRecherche = chapitre;
+    this.imageAEnvoyer = "";
+     this.httpClient.get<any[]>("http://localhost:8080/lecteur/"+manga+"/"+chapitre).subscribe( 
       (reponse)=> {
+        console.log(reponse);
         this.listeImages = reponse;
-        this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
+        if(reponse[0] === 0){
+          alert('Impossible de trouver le chapitre '+chapitre+ ' de '+manga);
+        }
+        else{
+          this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
+          this.nbPages = this.listeImages.length;
+        }
+        this.rechercheTerminee = true;
       },
       (err) => {
        console.log(err);
@@ -30,11 +47,13 @@ export class PageLecteurComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.index = 0;
-    this.getListeUrls();
-    this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, ''); 
   }
 
+  chargerNouveauScan(recherche){
+    console.log(recherche);
+    this.getListeUrls(recherche.nomManga,recherche.numChapitre);
+    this.index = 0;
+  }
 
   onPageChange(aFaire){
     switch(aFaire){
@@ -51,7 +70,10 @@ export class PageLecteurComponent implements OnInit {
         break;
     }
     this.imageAEnvoyer = this.listeImages[this.index].replace(/^\s+|\s+$/g, '');
-    window.scrollTo(0,0)
+    setTimeout(function(){
+      window.scrollTo(0,0)
+    }, 500);
+    
   }
 
   lirePageSuivante(){

@@ -8,11 +8,13 @@ import { Component, OnInit , Input , Output , EventEmitter } from '@angular/core
 export class ImageLecteurComponent implements OnInit {
   @Output() action = new EventEmitter<number>();
   @Input() src : string;
- 
+  @Input() nomMangaEnRecherche : string;
+  @Input() numChap : string;
+  @Input() afficher : boolean;
+
   constructor() { }
 
   ngOnInit() {
-    
   }
   nextPage(){
     this.action.emit(1);
