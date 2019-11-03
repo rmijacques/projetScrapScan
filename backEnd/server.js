@@ -20,6 +20,9 @@ app.get('/', function(req, res) {
 app.get('/lecteur/:mangaName/:numScan', async function(req,res){
     res.json(await dlTools.recupUrlsPages(req.params.mangaName, req.params.numScan));  
 })
+app.get('/recupMangasPreferes', async function(req,res){
+    res.send(await fs.readFileSync("mangas.json")); 
+})
 
 app.listen(8080);
 console.log('Server running listenning on 8080 using cors');
