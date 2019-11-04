@@ -1,0 +1,11 @@
+Backend :
+- Gestion BDD
+- Recup logo manga + stockage
+- Gestion plusieurs utilisateurs
+- Notification nouveaux scan (https://developer.mozilla.org/fr/docs/Web/API/notification/Using_Web_Notifications + mail)
+- Regarder hebergements
+
+Frontend :
+- Faire la page dernieres sorties
+- Modifier lecteur
+- Linker les pages
