@@ -37,7 +37,7 @@ export class PageLecteurComponent implements OnInit {
     this.mangaEnRecherche = manga;
     this.chapEnRecherche = chapitre;
     this.imageAEnvoyer = "";
-     this.httpClient.get<any[]>("http://localhost:8080/lecteur/"+manga+"/"+chapitre).subscribe( 
+    this.httpClient.get<any[]>("http://localhost:8080/lecteur/"+manga+"/"+chapitre).subscribe( 
       (reponse)=> {
         console.log(reponse);
         this.index = 0;
