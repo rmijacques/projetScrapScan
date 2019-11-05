@@ -14,7 +14,7 @@ export class LeftMenuLecteurComponent implements OnInit {
   @Output() mangaAChercher = new EventEmitter();
   @Input() numPage : number;
   @Input() nbPages : number;
-  listeMangasHabituels : string[] = [];
+  listeMangasHabituels = [];
 
 
   constructor(private httpClient : HttpClient) { }
@@ -24,9 +24,11 @@ export class LeftMenuLecteurComponent implements OnInit {
   }
 
   lireMangasPreferes(){
-    this.httpClient.get<string>("http://localhost:8080/recupMangasPreferes").subscribe( 
+    //Passer sur local storage
+    this.httpClient.get<any[]>("http://localhost:8080/recupMangasPreferes").subscribe( 
       (reponse)=> {
-        //this.listeMangasHabituels = JSON.parse(reponse);
+        this.listeMangasHabituels = reponse;
+        console.log(this.listeMangasHabituels[0].mangas[0])
         console.log(reponse)
       },
       (err) => {

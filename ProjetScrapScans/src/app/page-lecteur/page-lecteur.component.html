@@ -3,6 +3,6 @@
         <app-left-menu-lecteur (action)="onPageChange($event)" (mangaAChercher)="chargerNouveauScan($event)" [numPage]="index+1" [nbPages]="nbPages"></app-left-menu-lecteur>
     </div>
     <div id="lecteur">
-        <app-image-lecteur  [src]="imageAEnvoyer" [nomMangaEnRecherche]="mangaEnRecherche" [afficher]="rechercheTerminee" [numChap]="chapEnRecherche" (action)="onPageChange($event)"></app-image-lecteur>
+        <app-image-lecteur  [src]="test.getValue()" [nomMangaEnRecherche]="mangaEnRecherche" [afficher]="rechercheTerminee" [numChap]="chapEnRecherche" (action)="onPageChange($event)"></app-image-lecteur>
     </div>
 </div>

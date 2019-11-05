@@ -1,6 +1,7 @@
 import { Component, OnInit, Injectable , HostListener } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import {NgForm} from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 
 
 export enum KEY_CODE {
@@ -27,10 +28,12 @@ export class PageLecteurComponent implements OnInit {
   manga :  string;
   chapitre;
 
-  constructor(private httpClient : HttpClient) { 
 
+  constructor(private httpClient : HttpClient) { 
   }
 
+  ngOnInit() {
+  }
   
   getListeUrls(manga,chapitre){
     this.rechercheTerminee = false;
@@ -59,9 +62,6 @@ export class PageLecteurComponent implements OnInit {
       (err) => {
        console.log(err);
     });
-  }
-
-  ngOnInit() {
   }
 
   chargerNouveauScan(recherche){
@@ -109,10 +109,4 @@ export class PageLecteurComponent implements OnInit {
     }, 500);
     
   }
-
-  lirePageSuivante(){
-    this.index++;
-    this.imageAEnvoyer = this.listeImages[this.index];
-  }
-
 }
