@@ -1,16 +1,1 @@
-{
-    "mangas" : [
-        {
-            "name" : "Shingeki No Kyojin",
-            "lastChapter" : 122
-        },
-        {
-            "name" : "One Piece",
-            "lastChapter": 960
-        },
-        {
-            "name" : "Dr Stone",
-            "lastChapter" : 127
-        }
-    ]
-}
+[{"name":"One Piece","nextChapter":959}]
