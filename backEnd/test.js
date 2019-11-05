@@ -11,7 +11,7 @@ var data = JSON.parse(file)["mangas"];
 console.log(data);
 
 
-dlTools.recupUrlsPages(data[0].name, data[0].lastChapter);
+surveillance.miseAJour("one-piece",958,18);
 
 
 //surveillance.recupDerniersChapitresSortis();

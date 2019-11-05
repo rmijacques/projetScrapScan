@@ -1,3 +1,8 @@
-<div  style="text-align: center;" (click)="nextPage()">
-    <img id="image" src= "{{ src }}">
+<div id="conteneurImage" (click)="nextPage()">
+    <img id="image" src= "{{ src }}" max-width="100%">
+    <div style="vertical-align : middle">
+        <img id="load" src ="https://media.giphy.com/media/sSgvbe1m3n93G/giphy.gif" *ngIf="!afficher">
+        <p id="nomManga" *ngIf="!afficher">Chargement des pages du chapitre de {{ nomMangaEnRecherche }} n° {{ numChap }}</p>
+    </div>
+
 </div>

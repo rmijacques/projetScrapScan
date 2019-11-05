@@ -1,7 +1,21 @@
-<img src="https://static.cnews.fr/sites/default/files/styles/image_640_360/public/pepe_the_frog_sad.jpg" style="width:100%">
+<img id="logo" src="assets/logo.jpg">
 <hr>
-<button type ="button" class="btn btn-primary" (click)="nextPage()">Page suivante</button>
+<form autocomplete="off" (ngSubmit)="onSubmit(f)" #f="ngForm">
+    <div class="form-group">
+        <label for="manga">Nom du manga :</label>
+        <input list="listeMangas" type="text" id="manga" class ="form-control left-menu-input" name="nomManga" ngModel>
+        <datalist id="listeMangas">
+            <option *ngFor="let nomManga of listeMangasHabituels" value="{{nomManga}}">
+        </datalist>
+    </div>
+    <div class="form-group">
+        <label for="chapitre">Chapitre :</label>
+        <input type="text" id="chapitre" class="form-control left-menu-input" name="numChapitre" ngModel>
+    </div>
+    <button class="btn btn-dark" type="submit">Charger scan</button>
+</form> 
 <hr>
-<button type ="button" class="btn btn-primary" id ="prevPage" (click)="prevPage()">Page Precedente</button>
+<button type ="button" class="btn btn-primary left-menu-input" (click)="nextPage()">Page suivante</button>
+<button type ="button" class="btn btn-primary left-menu-input" style="margin-top : 10px;" id ="prevPage" (click)="prevPage()">Page Precedente</button>
 <hr>
-<h1>Page n° {{ numPage }}</h1>
+<h2 *ngIf="numPage">p {{ numPage }} / {{nbPages}}</h2>
