@@ -63,6 +63,10 @@ module.exports = {
         } catch (error) {
             console.log(error);
         }
+    },
+
+    testUpdateMangaLibrary: function(mangaName, chapterNum, nbPages){
+        updateMangaLibrary(mangaName, chapterNum, nbPages);
     }
 };
 
@@ -123,20 +127,49 @@ function updateMangaLibrary(mangaName, chapterNum, nbPages) {
     let srcPages = [];
     let addrPage = "temp/" + mangaName + "/" + chapterNum + "/";
     let aEcrire;
-    let jsonAvantModif = fs.readFileSync("temp/bibliotheque.json", (err) => {});
+    let jsonAvantModif = fs.readFileSync("temp/bibliotheque.json", (err) => {console.log("Erreur lecture JSON: "+err)});
     let logAvantModif = JSON.parse(jsonAvantModif);
+    let mangaDejaPresent = false;
 
+    console.log("Avant modif :"+logAvantModif)
     for (let i = 1; i < nbPages; i++) {
         srcPages[i - 1] = addrPage + i + ".png";
     }
-
-    aEcrire = {
-        name: mangaName,
-        chapter: chapterNum,
-        listePages: srcPages
+    if(logAvantModif.length > 0){
+       for(let i=0;i<logAvantModif.length;i++){
+           let element = logAvantModif[i];
+            if(element.name == mangaName){
+                mangaDejaPresent = true;
+                element.chapters.push({
+                    numChapter: chapterNum,
+                    listePages: srcPages
+                });
+            }            
+        } 
+        if(!mangaDejaPresent){
+            aEcrire = {
+                name: mangaName,
+                chapters:[{ 
+                    numChapter :chapterNum,
+                    listePages: srcPages
+                }]
+            }
+            logAvantModif.push(aEcrire);
+        }
     }
-    logAvantModif.push(aEcrire);
+    else{
+        aEcrire = {
+            name: mangaName,
+            chapters:[{ 
+                numChapter :chapterNum,
+                listePages: srcPages
+            }]
+        }
+        logAvantModif.push(aEcrire);
+    }
 
-    fs.writeFile("temp/bibliotheque.json", JSON.stringify(logAvantModif), (err) => {})
+    console.log("APres modif:" +logAvantModif);
+    
+    fs.writeFileSync("temp/bibliotheque.json", JSON.stringify(logAvantModif,null,'\t'), (err) => {console.log(err)})
 
 }

@@ -46,20 +46,25 @@ fs.mkdir("temp", function (error) {
 });
 
 if(!fs.existsSync('temp/bibliotheque.json')){
-    fs.writeFile('temp/bibliotheque.json','[]',(err)=>{});    
+    fs.mkdir('temp',err=>{console.log("err mkdir")})
+    fs.writeFileSync('temp/bibliotheque.json','[]',(err)=>{});    
 }
 
+dlTools.testUpdateMangaLibrary("one-piece",960,20)
+dlTools.testUpdateMangaLibrary("one-piece",961,20)
+dlTools.testUpdateMangaLibrary("one-piece",962,20)
+dlTools.testUpdateMangaLibrary("berserk",962,20)
 
 app.get('/', function(req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.send('Page Acueil');
 });
 
-schedule.scheduleJob('* * * * *', function(){
-    watcher.recupDerniersChapitresSortisv2();
-});
+// schedule.scheduleJob('* * * * *', function(){
+//     watcher.recupDerniersChapitresSortisv2();
+// });
 
-watcher.recupDerniersChapitresSortisv2();
+
 
 app.get('/lecteur/:mangaName/:numScan', async function(req,res){
     res.json(await dlTools.recupUrlsPages(req.params.mangaName, req.params.numScan));  
