@@ -1,17 +1,11 @@
-var dlTools = require('./telechargerChapitre.js');
-var surveillance = require('./surveillerSorties.js');
+var downloadTools = require('./downloadTools.js');
+var surveillance = require('./outingsWatcher.js');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
 const request = require('request');
 
 
-var file = fs.readFileSync("mangas.json");
-var data = JSON.parse(file)["mangas"];
+var file = fs.readFileSync("usersData.json");
+var data = JSON.parse(file)[0]["mangaList"];
 console.log(data);
-
-
-surveillance.miseAJour("one-piece",958,18);
-
-
-//surveillance.recupDerniersChapitresSortis();

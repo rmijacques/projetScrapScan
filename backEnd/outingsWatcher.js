@@ -1,5 +1,6 @@
 const axios = require('axios');
-const dlTools = require('./telechargerChapitre.js');
+const downloadTools = require('./downloadTools.js');
+const userManager = require('./userManager.js')
 const cheerio = require('cheerio');
 const fs = require('fs');
 const request = require('request');
@@ -50,7 +51,7 @@ module.exports = {
 
         console.log("Searching for new scans..........");
 
-        mangasAVerifier = await JSON.parse(fs.readFileSync('mangas.json'));
+        mangasAVerifier = userManager.getFullMangaList();
 
         for (let i = 0; i < mangasAVerifier.length; i++) {
             var name = mangasAVerifier[i].name.replace(/ /gi, '-').toLowerCase();
@@ -58,7 +59,7 @@ module.exports = {
             console.log(mangaStr);
             await axios.get(mangaStr)
                 .then((reponse) => {
-                    dlTools.telechargerUnScan(name, mangasAVerifier[i].nextChapter);
+                    downloadTools.telechargerUnScan(name, mangasAVerifier[i].nextChapter);
 
                     mangasAVerifier[i].nextChapter++;
                     console.log("Nouveau Scan de " + mangasAVerifier[i].name);
