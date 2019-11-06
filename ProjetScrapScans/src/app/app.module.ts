@@ -10,6 +10,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NouvellesSortiesComponent } from './nouvelles-sorties/nouvelles-sorties.component';
 import { LoginComponent } from './login/login.component';
+import { MangaCardComponent } from './manga-card/manga-card.component';
+
 
 @NgModule({
   declarations: [
@@ -18,7 +20,8 @@ import { LoginComponent } from './login/login.component';
     ImageLecteurComponent,
     LeftMenuLecteurComponent,
     NouvellesSortiesComponent,
-    LoginComponent
+    LoginComponent,
+    MangaCardComponent
   ],
   imports: [
     BrowserModule,

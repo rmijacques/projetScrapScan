@@ -49,7 +49,7 @@ module.exports = {
         let mangaStr;
         let resJSON;
 
-        console.log("Searching for new scans..........");
+        console.log("Searching for new scans...");
 
         mangasAVerifier = userManager.getFullMangaList();
 
@@ -70,6 +70,7 @@ module.exports = {
                     console.log("Pas de Nouveau Scan de " + mangasAVerifier[i].name + "\n" + error);
                 });
         }
+        //update MangaList
         resJSON = JSON.stringify(mangasAVerifier);
         fs.writeFile('mangas.json', resJSON, 'utf8', function (err, data) {
             if (err) {

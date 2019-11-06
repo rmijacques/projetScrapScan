@@ -1,6 +1,9 @@
 import { Component, OnInit, Injectable , HostListener } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {NgForm} from '@angular/forms';
+import {NgForm, ɵInternalFormsSharedModule} from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 
 export enum KEY_CODE {
@@ -27,11 +30,42 @@ export class PageLecteurComponent implements OnInit {
   manga :  string;
   chapitre;
 
-  constructor(private httpClient : HttpClient) { 
 
+
+  constructor(private httpClient : HttpClient,
+    private _route: ActivatedRoute) { 
   }
 
+  ngOnInit() {
+    this._route.params.subscribe(params => {
+      this.getListeUrlsParam(params);
+    });
+  }
   
+  getListeUrlsParam(scanAChercher){
+    console.log(scanAChercher)
+    this.rechercheTerminee = false;
+    this.mangaEnRecherche = scanAChercher.mangaName;
+    this.chapEnRecherche = scanAChercher.numChap;
+    this.imageAEnvoyer = "";
+    this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties").subscribe( 
+      (reponse)=> {
+        this.index = 0;
+        let chapitres = reponse.find((elem) => elem.name == scanAChercher.mangaName).chapters;
+        console.log(chapitres);
+        this.listeImages = chapitres.find((elem) => elem.numChapter == scanAChercher.numChap).listePages
+        
+        for(let i=0;i<this.listeImages.length;i++){
+          this.listeImages[i] = "http://localhost:8080/" + this.listeImages[i];
+        }
+        this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
+        this.nbPages = this.listeImages.length-1;
+        this.manga = scanAChercher.mangaName;
+        this.chapitre = scanAChercher.numChap;
+        this.rechercheTerminee = true;
+      });
+  }
+
   getListeUrls(manga,chapitre){
     this.rechercheTerminee = false;
     this.mangaEnRecherche = manga;
@@ -59,9 +93,6 @@ export class PageLecteurComponent implements OnInit {
       (err) => {
        console.log(err);
     });
-  }
-
-  ngOnInit() {
   }
 
   chargerNouveauScan(recherche){
@@ -109,10 +140,4 @@ export class PageLecteurComponent implements OnInit {
     }, 500);
     
   }
-
-  lirePageSuivante(){
-    this.index++;
-    this.imageAEnvoyer = this.listeImages[this.index];
-  }
-
 }

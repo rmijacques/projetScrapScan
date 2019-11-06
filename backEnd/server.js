@@ -10,43 +10,99 @@ const cors= require('cors');
 const schedule = require('node-schedule');
 
 
-var app = express()
-app.use(cors())
+const LIBRARY_URL = "temp/bibliotheque.json";
 
+//Set up le directory de svg de scans
 fs.mkdir("temp", function (error) {
     if (error) {
         console.log("Erreur creation dossier : \n" + error);
     }
-    
 });
-
-if(!fs.existsSync('temp/bibliotheque.json')){
-    fs.writeFile('temp/bibliotheque.json','[]',(err)=>{});    
+if(!fs.existsSync(LIBRARY_URL)){
+    fs.mkdir('temp',err=>{console.log("err mkdir")})
+    fs.writeFileSync(LIBRARY_URL,'[]',(err)=>{});    
 }
 
+
+//lunch scheduled watcher
 // schedule.scheduleJob('* * * * *', function(){
 //     outingsWatcher.recupDerniersChapitresSortisv2();
 // });
 
+
+//Set up le server
+var app = express()
+app.use(cors())
+
+console.log("Server sets up");
+
+
+//Requete de Base, renvoi une erreur car pas utilisée
+app.get('/', function (req, res) {
+    throw new Error('[custom ]ops ')
+    res.send('Page Acueil');
+});
+//Poser Q Remi
 app.get('/', function(req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.send('Page Acueil');
 });
 
+
+//Requete pour checker si login est valide / verifier quel compte doit être chargé
+app.get("/checkUser/:userName", async function(req,res){
+    console.log("[GET] /checkUser/" + req.params.userName);
+    res.json({resText : await userManager.isInDataBase(req.params.userName)});
+});
+
+
+//Requete des mangas pref (modif incoming)
+app.get('/recupMangasPreferes', async function (req, res) {
+    console.log("[GET] /recupMangasPreferes");
+    res.send(await fs.readFileSync("mangas.json"));
+})
+
+
+//Requete pour choper la couverture ?
+app.get('/cover/:mangaName', function(req,res){
+    console.log("[GET] /cover/" + req.params.mangaName);
+    res.send()
+})
+
+
+//Requete des URLS des images d'un scan sur le site
 app.get('/lecteur/:mangaName/:numScan', async function(req,res){
+    console.log("[GET] /lecteur/" + req.params.mangaName + '/' + req.params.numScan);
     res.json(await downloadTools.recupUrlsPages(req.params.mangaName, req.params.numScan));  
 })
 
+
+//Requete d'actualisation des derniers sorites
 app.get('/recupDerniereSorties', async function(req,res){
+    console.log("[GET] /recupDerniereSorties");
     let biblio = await fs.readFileSync("temp/bibliotheque.json",(err)=>{
         console.log("Recup dernieres sortie : \n"+err);
     });
     res.send(biblio);
 });
 
-app.get("/checkUser/:userName", async function(req,res){
-    res.send(await userManager.isInDataBase(req.params.userName));
-});
+
+//make temp directory accessible from outside the app
+app.use("/temp",express.static(__dirname + '/temp'));
+// Ajouter un error handler (middleware)
+app.use(function (error, request, response, next) {
+    console.log(error.message)
+    if (error) {
+        if (error.message && error.message.match(/^\[custom message\]/gi)) {
+            response.send(error.message.replace(/^\[custom message\]/gi, ""))
+        }
+        else {
+            response.sendStatus(500).send("Internal error")
+        }
+    }
+})
+
+
 
 app.listen(8080);
-console.log('Server running listenning on 8080 using cors');
+console.log('Server started listenning on PORT:8080 ');

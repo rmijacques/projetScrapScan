@@ -18,16 +18,15 @@ export class LoginComponent implements OnInit {
   }
 
   checkLoginBackend(userName){
-    this.httpClient.get<string>("http://localhost:8080/checkUser/" + userName).subscribe( 
+    this.httpClient.get<any[]>("http://localhost:8080/checkUser/" + userName).subscribe( 
       (reponse)=> {
-        if (reponse == 'Baptiste'){
-          //Go to 0's nouvelles sorties
-        }
-        else if (reponse == 'Remi'){
-          //Go to 1's nouvelles sorties
+        if (reponse["resText"] != "not identified"){
+          //Load this special account
+          console.log("Welcome " + reponse["resText"]);
         }
         else {
           //throw new Error('Invalid')
+          console.log("FUIS");
         }
       },
       (err) => {
@@ -36,6 +35,6 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(form : NgForm){
-    this.checkLoginBackend(form.value); 
+    this.checkLoginBackend(form.value["login"]); 
   }
 }
