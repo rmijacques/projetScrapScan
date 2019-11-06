@@ -15,7 +15,8 @@ export class NouvellesSortiesComponent implements OnInit {
     this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties").subscribe( 
       (reponse)=> {
         this.toutesLesSorties = reponse;
-      })
+      });
+    
   }
   
 

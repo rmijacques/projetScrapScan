@@ -21,7 +21,10 @@
     "@angular/router": "~8.2.9",
     "angular": "^1.7.8",
     "bootstrap": "^4.3.1",
+    "mdbootstrap": "^4.8.11",
+    "popper": "^1.0.1",
     "rxjs": "~6.4.0",
+    "rxjs-compat": "^6.5.3",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },

@@ -9,6 +9,8 @@ import { LeftMenuLecteurComponent } from './left-menu-lecteur/left-menu-lecteur.
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NouvellesSortiesComponent } from './nouvelles-sorties/nouvelles-sorties.component';
+import { MangaCardComponent } from './manga-card/manga-card.component';
+
 
 @NgModule({
   declarations: [
@@ -16,7 +18,8 @@ import { NouvellesSortiesComponent } from './nouvelles-sorties/nouvelles-sorties
     PageLecteurComponent,
     ImageLecteurComponent,
     LeftMenuLecteurComponent,
-    NouvellesSortiesComponent
+    NouvellesSortiesComponent,
+    MangaCardComponent
   ],
   imports: [
     BrowserModule,

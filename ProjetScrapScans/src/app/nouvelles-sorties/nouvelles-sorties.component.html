@@ -1,3 +1,10 @@
-<ul>
-    <li *ngFor="let s of toutesLesSorties">{{ s.name }}</li>
-</ul>>
+
+<div class="card-deck">
+    <app-manga-card 
+    class="card" 
+    *ngFor="let s of toutesLesSorties" 
+    [mangaName]="s.name" 
+    [chapitres]="s.chapters" 
+    style="width: 18rem;max-width:150px;background-color: #D3D3D3;"></app-manga-card>
+</div>
+
