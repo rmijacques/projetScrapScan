@@ -144,6 +144,9 @@ function updateMangaLibrary(mangaName, chapterNum, nbPages) {
                     numChapter: chapterNum,
                     listePages: srcPages
                 });
+                element.chapters.sort((a,b)=>{
+                    return b.numChapter - a.numChapter;
+                })
             }            
         } 
         if(!mangaDejaPresent){
