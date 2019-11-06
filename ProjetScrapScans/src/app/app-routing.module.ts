@@ -5,7 +5,7 @@ import { NouvellesSortiesComponent} from './nouvelles-sorties/nouvelles-sorties.
 
 
 const routes: Routes = [
-  {path :'lecteur',component : PageLecteurComponent },
+  {path :'lecteur/:mangaName/:numChap',component : PageLecteurComponent },
   {path :'dernieresSorties',component : NouvellesSortiesComponent },
   {path :'',component : NouvellesSortiesComponent },
 ];
