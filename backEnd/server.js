@@ -28,8 +28,10 @@ if(!fs.existsSync(LIBRARY_URL)){
 // schedule.scheduleJob('* * * * *', function(){
 //     outingsWatcher.recupDerniersChapitresSortisv2();
 // });
-
-
+async function main(){
+    outingsWatcher.recupDerniersChapitresSortisv2();
+}
+main();
 //Set up le server
 var app = express()
 app.use(cors())

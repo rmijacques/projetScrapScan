@@ -1,14 +1,1 @@
-[
-    {
-        "name": "Baptiste",
-        "mangaList":[
-            {"name":"One Piece","nextChapter":962}
-        ]
-    },
-    {
-        "name": "Remi",
-        "mangaList":[
-            {"name":"One Piece","nextChapter":962}
-        ]
-    }
-]
+[{"name":"Baptiste","mangaList":[{"name":"One Piece","nextChapter":961}]},{"name":"Remi","mangaList":[{"name":"One Piece","nextChapter":961}]}]

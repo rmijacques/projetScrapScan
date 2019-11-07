@@ -48,35 +48,35 @@ module.exports = {
         let mangasAVerifier = [];
         let mangaStr;
         let resJSON;
+        let nouvScans = false;
+        let name;
 
         console.log("Searching for new scans...");
 
         mangasAVerifier = userManager.getFullMangaList();
-
-        for (let i = 0; i < mangasAVerifier.length; i++) {
-            var name = mangasAVerifier[i].name.replace(/ /gi, '-').toLowerCase();
-            mangaStr = SITE_URL + name + '/' + mangasAVerifier[i].nextChapter + '/' + 1;
-            console.log(mangaStr);
-            await axios.get(mangaStr)
-                .then((reponse) => {
-                    downloadTools.telechargerUnScan(name, mangasAVerifier[i].nextChapter);
-
-                    mangasAVerifier[i].nextChapter++;
-                    console.log("Nouveau Scan de " + mangasAVerifier[i].name);
+        let usersData = JSON.parse(fs.readFileSync('usersData.json'));
+        usersData.forEach(async function(user){
+            await user["mangaList"].forEach(async function(manga){
+                name = manga.name.replace(/ /gi, '-').toLowerCase();
+                mangaStr = SITE_URL + name + '/' + manga.nextChapter + '/' + 1;
+                console.log(mangaStr);
+                await axios.get(mangaStr)
+                    .then((reponse) => {
+                        nouvScans = true;
+                    })
+                    .catch((error) => {});
+                if (nouvScans) {
+                    await downloadTools.telechargerUnScan(name, manga.nextChapter,user.name);
+                    userManager.updateList(manga.name,manga.nextChapter+1,user.name)
+                    console.log("Nouveau Scan de " + manga.name);
                     //Notifier utilisateur de la sortie du scan
-
-                })
-                .catch((error) => {
-                    console.log("Pas de Nouveau Scan de " + mangasAVerifier[i].name + "\n" + error);
-                });
-        }
-        //update MangaList
-        resJSON = JSON.stringify(mangasAVerifier);
-        fs.writeFile('mangas.json', resJSON, 'utf8', function (err, data) {
-            if (err) {
-                console.log(err);
-            }
+                } else {
+                    console.log("Pas de Nouveau Scan de " + manga.name + "\n");
+                }
+            })
         });
+
+        
 
     }
 };
