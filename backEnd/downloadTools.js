@@ -16,30 +16,38 @@ module.exports = {
             let numPage = 1;
             let name = mangaName.replace(/ /gi, '-').toLowerCase();
             let urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
-            let urlCover =  COVER_URL + name + '/cover/cover_250x350.jpg';
+            let urlCover = COVER_URL + name + '/cover/cover_250x350.jpg';
             let dirName = "temp/" + mangaName;
+            let chapitreDejaTelecharge = false;
+
             fs.mkdir(dirName, function (error) {
                 if (error) {
                     console.log("Erreur creation dossier : \n" + error);
                 }
             });
-            if(!fs.existsSync(dirName+"/cover.jpg")){
-                download(urlCover, dirName+"/cover.jpg", (err)=>{});
+            if (!fs.existsSync(dirName + "/cover.jpg")) {
+                download(urlCover, dirName + "/cover.jpg", (err) => {});
             }
             dirName += "/" + numScan + "/";
-            fs.mkdir(dirName, function (error) {
+            fs.mkdirSync(dirName, function (error) {
                 if (error) {
-                    console.log("Erreur creation dossier : \n" + error);
+                    console.log("Le dossier existe, on ne telecharge donc pas le chapitre" + error);
+                    chapitreDejaTelecharge = true;
                 }
             });
-            console.log("Lancement du telechargement de " + mangaName + " Scan N°" + numScan);
-            while (await telechargerUnePage(urlPage, numPage, dirName) == true) {
-                console.log(urlPage);
-                numPage++;
-                urlSepare = urlPage.split('/');
-                urlPage = '';
-                urlSepare[urlSepare.length - 1] = numPage;
-                urlPage = urlSepare.join('/');
+            if(!chapitreDejaTelecharge){
+                console.log("Lancement du telechargement de " + mangaName + " Scan N°" + numScan);
+                while (await telechargerUnePage(urlPage, numPage, dirName) == true) {
+                    console.log(urlPage);
+                    numPage++;
+                    urlSepare = urlPage.split('/');
+                    urlPage = '';
+                    urlSepare[urlSepare.length - 1] = numPage;
+                    urlPage = urlSepare.join('/');
+                }
+            }
+            else{
+                numPage = fs.readdirSync(dirName).length;
             }
             updateMangaLibrary(mangaName, numScan, numPage);
 
@@ -125,7 +133,9 @@ function updateMangaLibrary(mangaName, chapterNum, nbPages) {
     let srcPages = [];
     let addrPage = "temp/" + mangaName + "/" + chapterNum + "/";
     let aEcrire;
-    let jsonAvantModif = fs.readFileSync(LIBRARY_URL, (err) => {console.log("Erreur lecture JSON: "+err)});
+    let jsonAvantModif = fs.readFileSync(LIBRARY_URL, (err) => {
+        console.log("Erreur lecture JSON: " + err)
+    });
     let logAvantModif = JSON.parse(jsonAvantModif);
     let mangaDejaPresent = false;
 
@@ -135,36 +145,39 @@ function updateMangaLibrary(mangaName, chapterNum, nbPages) {
     for (let i = 1; i < nbPages; i++) {
         srcPages[i - 1] = addrPage + i + ".png";
     }
-    if(logAvantModif.length > 0){
-       for(let i=0;i<logAvantModif.length;i++){
-           let element = logAvantModif[i];
-            if(element.name == mangaName){
+    if (logAvantModif.length > 0) {
+        for (let i = 0; i < logAvantModif.length; i++) {
+            let element = logAvantModif[i];
+            //Si le manga est dans la biblio
+            if (element.name == mangaName) {
                 mangaDejaPresent = true;
                 element.chapters.push({
                     numChapter: chapterNum,
                     listePages: srcPages
                 });
-                element.chapters.sort((a,b)=>{
+                element.chapters.sort((a, b) => {
                     return b.numChapter - a.numChapter;
                 })
-            }            
-        } 
-        if(!mangaDejaPresent){
+            }
+        }
+        //Si le manga n'est pas dans la biblio
+        if (!mangaDejaPresent) {
             aEcrire = {
                 name: mangaName,
-                chapters:[{ 
-                    numChapter :chapterNum,
+                chapters: [{
+                    numChapter: chapterNum,
                     listePages: srcPages
                 }]
             }
             logAvantModif.push(aEcrire);
         }
     }
-    else{
+    //Si la biblio est vide
+    else {
         aEcrire = {
             name: mangaName,
-            chapters:[{ 
-                numChapter :chapterNum,
+            chapters: [{
+                numChapter: chapterNum,
                 listePages: srcPages
             }]
         }
@@ -173,7 +186,9 @@ function updateMangaLibrary(mangaName, chapterNum, nbPages) {
 
     console.log("Apres modif :");
     console.log(logAvantModif);
-    
-    fs.writeFileSync(LIBRARY_URL, JSON.stringify(logAvantModif,null,'\t'), (err) => {console.log(err)})
+
+    fs.writeFileSync(LIBRARY_URL, JSON.stringify(logAvantModif, null, '\t'), (err) => {
+        console.log(err)
+    })
 
 }
