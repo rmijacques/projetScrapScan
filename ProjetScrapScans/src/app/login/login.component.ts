@@ -1,4 +1,4 @@
-import { Component, OnInit ,Output , Input, Injectable} from '@angular/core';
+import { Component, OnInit ,Output , Input, Injectable, INJECTOR} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter } from '@angular/core';
 import {NgForm, FormControl} from '@angular/forms';
@@ -12,17 +12,19 @@ import {NgForm, FormControl} from '@angular/forms';
 @Injectable()
 export class LoginComponent implements OnInit {
 
-  constructor(private httpClient : HttpClient) {}
+  constructor(private httpClient : HttpClient
+              ) {}
 
   ngOnInit() {
   }
 
-  checkLoginBackend(userName){
+  async checkLoginBackend(userName){
     this.httpClient.get<any[]>("http://localhost:8080/checkUser/" + userName).subscribe( 
       (reponse)=> {
         if (reponse["resText"] != "not identified"){
           //Load this special account
           console.log("Welcome " + reponse["resText"]);
+          sessionStorage.setItem("user", userName);
         }
         else {
           //throw new Error('Invalid')
@@ -32,9 +34,10 @@ export class LoginComponent implements OnInit {
       (err) => {
        console.log(err);
     });
+    
   }
 
   onSubmit(form : NgForm){
-    this.checkLoginBackend(form.value["login"]); 
+    this.checkLoginBackend(form.value["login"])
   }
 }
