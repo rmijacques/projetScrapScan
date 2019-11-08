@@ -29,7 +29,7 @@ if(!fs.existsSync(LIBRARY_URL)){
 //     outingsWatcher.recupDerniersChapitresSortisv2();
 // });
 async function main(){
-    outingsWatcher.recupDerniersChapitresSortisv2();
+    outingsWatcher.recupDerniersChapitresSortisv2("Remi");
 }
 main();
 //Set up le server

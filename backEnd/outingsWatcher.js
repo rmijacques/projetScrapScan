@@ -55,26 +55,30 @@ module.exports = {
 
         mangasAVerifier = userManager.getFullMangaList();
         let usersData = JSON.parse(fs.readFileSync('usersData.json'));
-        usersData.forEach(async function(user){
-            await user["mangaList"].forEach(async function(manga){
+        console.log(usersData)
+        let manga;
+        
+        for(let i=0;i<usersData.length;i++){
+            console.log("user data [i] " +usersData[i].name)
+            for(let j=0;j<usersData[i].mangaList.length;j++){
+                manga = usersData[i].mangaList[j]
+
                 name = manga.name.replace(/ /gi, '-').toLowerCase();
-                mangaStr = SITE_URL + name + '/' + manga.nextChapter + '/' + 1;
-                console.log(mangaStr);
-                await axios.get(mangaStr)
-                    .then((reponse) => {
-                        nouvScans = true;
-                    })
-                    .catch((error) => {});
-                if (nouvScans) {
-                    await downloadTools.telechargerUnScan(name, manga.nextChapter,user.name);
-                    userManager.updateList(manga.name,manga.nextChapter+1,user.name)
-                    console.log("Nouveau Scan de " + manga.name);
-                    //Notifier utilisateur de la sortie du scan
-                } else {
-                    console.log("Pas de Nouveau Scan de " + manga.name + "\n");
-                }
-            })
-        });
+                mangaStr = SITE_URL + manga.name.replace(/ /gi, '-').toLowerCase() + '/' + manga.nextChapter + '/' + 1;
+                mangaStr = mangaStr.replace(/\s/g, '');
+                nouvScans = true;
+
+                await axios.get(mangaStr).then(async response=>{
+                    console.log("Nouveau Scan de " + name);
+
+                    await downloadTools.telechargerUnScan(name, manga.nextChapter,usersData[i].name);
+                    userManager.updateList(manga.name,manga.nextChapter+1,usersData[i].name)
+                }).catch(err=>{
+                    console.log("Pas de Nouveau Scan de " + manga.name + "\n"+mangaStr);
+                    console.log("err "+err)
+                })
+            }
+        }
 
         
 

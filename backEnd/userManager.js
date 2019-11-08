@@ -26,7 +26,7 @@ module.exports = {
                 })
             }
         });
-        resJSON = JSON.stringify(usersData);
+        resJSON = JSON.stringify(usersData,null,4);
         fs.writeFile('usersData.json', resJSON, 'utf8', function (err, data) {
             if (err) {
                 console.log(err);
