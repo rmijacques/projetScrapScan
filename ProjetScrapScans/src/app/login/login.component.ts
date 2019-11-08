@@ -2,6 +2,7 @@ import { Component, OnInit ,Output , Input, Injectable, INJECTOR} from '@angular
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter } from '@angular/core';
 import {NgForm, FormControl} from '@angular/forms';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -12,8 +13,8 @@ import {NgForm, FormControl} from '@angular/forms';
 @Injectable()
 export class LoginComponent implements OnInit {
 
-  constructor(private httpClient : HttpClient
-              ) {}
+  constructor(private httpClient : HttpClient,
+              private router: Router) {}
 
   ngOnInit() {
   }
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit {
           //Load this special account
           console.log("Welcome " + reponse["resText"]);
           sessionStorage.setItem("user", userName);
+          this.router.navigate(["/dernieresSorties"])
         }
         else {
           //throw new Error('Invalid')
