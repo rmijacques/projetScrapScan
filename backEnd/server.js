@@ -80,12 +80,17 @@ app.get('/lecteur/:mangaName/:numScan', async function(req,res){
 
 
 //Requete d'actualisation des derniers sorites
-app.get('/recupDerniereSorties', async function(req,res){
+app.get('/recupDerniereSorties/:userName', async function(req,res){
     console.log("[GET] /recupDerniereSorties");
-    let biblio = await fs.readFileSync("temp/bibliotheque.json",(err)=>{
-        console.log("Recup dernieres sortie : \n"+err);
+    let jsonBiblio = await fs.readFileSync("temp/bibliotheque.json",(err)=>{
+        console.log("Recup dernieres sortie : erreur lecture bibliotheque\n"+err);
     });
-    res.send(biblio);
+    let biblio = JSON.parse(jsonBiblio);
+    let userBiblio = biblio.find((elem)=>{
+        return elem.username == req.params.userName
+    }).library
+
+    res.json(userBiblio)
 });
 
 
