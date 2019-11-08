@@ -48,7 +48,7 @@ export class PageLecteurComponent implements OnInit {
     this.mangaEnRecherche = scanAChercher.mangaName;
     this.chapEnRecherche = scanAChercher.numChap;
     this.imageAEnvoyer = "";
-    this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties").subscribe( 
+    this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties/"+sessionStorage.getItem("user")).subscribe( 
       (reponse)=> {
         this.index = 0;
         let chapitres = reponse.find((elem) => elem.name == scanAChercher.mangaName).chapters;

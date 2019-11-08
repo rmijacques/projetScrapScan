@@ -176,7 +176,7 @@ function updateMangaLibrary(mangaName, chapterNum, nbPages, userName) {
                         listePages: srcPages
                     }]
                 }
-                logAvantModif[userChoisi].push(aEcrire);
+                logAvantModif[userChoisi].library.push(aEcrire);
             }
         }
         else{
