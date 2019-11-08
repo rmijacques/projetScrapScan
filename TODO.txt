@@ -1,7 +1,7 @@
 Backend :
 - Gestion BDD
 - Recup logo manga + stockage
-- Gestion plusieurs utilisateurs
+- Gestion plusieurs utilisateurs --> recupDerniersChapitresSortisv2 and make it compatible with usersData.json
 - Notification nouveaux scan (https://developer.mozilla.org/fr/docs/Web/API/notification/Using_Web_Notifications + mail)
 - Regarder hebergements
 

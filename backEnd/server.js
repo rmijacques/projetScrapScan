@@ -1,5 +1,6 @@
-const dlTools = require('./telechargerChapitre.js');
-const watcher = require('./surveillerSorties.js');
+const downloadTools = require('./downloadTools.js');
+const outingsWatcher = require('./outingsWatcher.js');
+const userManager = require('./userManager.js')
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
@@ -9,39 +10,106 @@ const cors= require('cors');
 const schedule = require('node-schedule');
 
 
-var app = express()
-app.use(cors())
+const LIBRARY_URL = "temp/bibliotheque.json";
 
+//Set up le directory de svg de scans
 fs.mkdir("temp", function (error) {
     if (error) {
         console.log("Erreur creation dossier : \n" + error);
     }
-    
 });
-
-if(!fs.existsSync('temp/bibliotheque.json')){
-    fs.writeFile('temp/bibliotheque.json','[]',(err)=>{});    
+if(!fs.existsSync(LIBRARY_URL)){
+    fs.mkdir('temp',err=>{console.log("err mkdir")})
+    fs.writeFileSync(LIBRARY_URL,'[]',(err)=>{});    
 }
 
 
+//lunch scheduled watcher
+// schedule.scheduleJob('* * * * *', function(){
+//     outingsWatcher.recupDerniersChapitresSortisv2();
+// });
+async function main(){
+    outingsWatcher.recupDerniersChapitresSortisv2("Remi");
+}
+main();
+//Set up le server
+var app = express()
+app.use(cors())
+
+console.log("Server sets up");
+
+
+//Requete de Base, renvoi une erreur car pas utilisée
+app.get('/', function (req, res) {
+    throw new Error('[custom ]ops ')
+    res.send('Page Acueil');
+});
+//Poser Q Remi
 app.get('/', function(req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.send('Page Acueil');
 });
 
-schedule.scheduleJob('* * * * *', function(){
-    watcher.recupDerniersChapitresSortisv2();
+
+//Requete pour checker si login est valide / verifier quel compte doit être chargé
+app.get("/checkUser/:userName", async function(req,res){
+    console.log("[GET] /checkUser/" + req.params.userName);
+    res.json({resText : await userManager.isInDataBase(req.params.userName)});
 });
 
-app.get('/lecteur/:mangaName/:numScan', async function(req,res){
-    res.json(await dlTools.recupUrlsPages(req.params.mangaName, req.params.numScan));  
+
+//Requete des mangas pref (modif incoming)
+app.get('/recupMangasPreferes', async function (req, res) {
+    console.log("[GET] /recupMangasPreferes");
+    res.send(await fs.readFileSync("mangas.json"));
 })
-app.get('/recupDerniereSorties', async function(req,res){
-    let biblio = await fs.readFileSync("temp/bibliotheque.json",(err)=>{
-        console.log("Recup dernieres sortie : \n"+err);
+
+
+//Requete pour choper la couverture ?
+app.get('/cover/:mangaName', function(req,res){
+    console.log("[GET] /cover/" + req.params.mangaName);
+    res.send()
+})
+
+
+//Requete des URLS des images d'un scan sur le site
+app.get('/lecteur/:mangaName/:numScan', async function(req,res){
+    console.log("[GET] /lecteur/" + req.params.mangaName + '/' + req.params.numScan);
+    res.json(await downloadTools.recupUrlsPages(req.params.mangaName, req.params.numScan));  
+})
+
+
+//Requete d'actualisation des derniers sorites
+app.get('/recupDerniereSorties/:userName', async function(req,res){
+    console.log("[GET] /recupDerniereSorties");
+    let jsonBiblio = await fs.readFileSync("temp/bibliotheque.json",(err)=>{
+        console.log("Recup dernieres sortie : erreur lecture bibliotheque\n"+err);
     });
-    res.send(biblio);
+    let biblio = JSON.parse(jsonBiblio);
+    let userBiblio = biblio.find((elem)=>{
+        return elem.username == req.params.userName
+    }).library
+
+    res.json(userBiblio)
 });
+
+
+//make temp directory accessible from outside the app
+app.use("/temp",express.static(__dirname + '/temp'));
+// Ajouter un error handler (middleware)
+app.use(function (error, request, response, next) {
+    console.log(error.message)
+    if (error) {
+        if (error.message && error.message.match(/^\[custom message\]/gi)) {
+            response.send(error.message.replace(/^\[custom message\]/gi, ""))
+        }
+        else {
+            response.sendStatus(500).send("Internal error")
+        }
+    }
+})
+
+
 
 app.listen(8080);
-console.log('Server running listenning on 8080 using cors');
+console.log('Server started listenning on PORT:8080 ');
