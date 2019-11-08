@@ -12,7 +12,7 @@ export class NouvellesSortiesComponent implements OnInit {
   constructor(private httpClient : HttpClient) { }
 
   ngOnInit() {
-    this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties").subscribe( 
+    this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties/"+sessionStorage.getKey("user")).subscribe( 
       (reponse)=> {
         this.toutesLesSorties = reponse;
       });
