@@ -57,14 +57,6 @@ app.get("/checkUser/:userName", async function(req,res){
     res.json({resText : await userManager.isInDataBase(req.params.userName)});
 });
 
-
-//Requete des mangas pref (modif incoming)
-app.get('/recupMangasPreferes', async function (req, res) {
-    console.log("[GET] /recupMangasPreferes");
-    res.send(await fs.readFileSync("mangas.json"));
-})
-
-
 //Requete pour choper la couverture ?
 app.get('/cover/:mangaName', function(req,res){
     console.log("[GET] /cover/" + req.params.mangaName);

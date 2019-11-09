@@ -3,9 +3,12 @@
   <h4 class="card-title">{{mangaName}}</h4>
   <form class="card-text mt-auto" style="max-width: 150px;">
     <ul class="list-group align-self-end" style="max-height: 100px;overflow-y:scroll;">
-      <li class="list-group-item" *ngFor="let chap of chapitres">
-          <a [routerLink]="['/lecteur',mangaName,chap.numChapter]">{{chap.numChapter}}</a>
-        </li>
+      <li class="list-group-item list-group-item-success" *ngFor="let chap of chapitresTelecharges">
+          <a [routerLink]="['/lecteur',mangaName,chap]">{{chap}}</a>
+      </li>
+      <li class="list-group-item list-group-item-danger" *ngFor="let chap of tousLesChapitres">
+        <a [routerLink]="['/lecteur',mangaName,chap]">{{chap}}</a>
+      </li>
     </ul>
   </form>
 

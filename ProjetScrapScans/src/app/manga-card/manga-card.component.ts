@@ -10,10 +10,29 @@ export class MangaCardComponent implements OnInit {
   mangaCover;
   @Input() mangaName = String;
   @Input() chapitres : any[];
+  chapitresTelecharges;
+  tousLesChapitres;
   constructor() { }
 
   ngOnInit() {
     this.mangaCover = "http://localhost:8080/temp/"+this.mangaName+"/cover.jpg"
+    this.chapitresTelecharges = this.chapitres;
+
+    //A modifier pour recevoir directement liste chapter comme ca
+    for(let i=0;i<this.chapitresTelecharges.length;i++){
+      this.chapitresTelecharges[i] = this.chapitresTelecharges[i].numChapter;
+    }
+
+    let dernierChapPossede = this.chapitresTelecharges.reduce(function(a,b){
+      Math.min(a,b);
+    })
+    this.tousLesChapitres = []
+    for(let i=1;i<dernierChapPossede;i++){
+      this.tousLesChapitres.push(i);
+    }
+    this.tousLesChapitres.sort(function(a,b){
+      return b - a
+    })
   }
 
 }

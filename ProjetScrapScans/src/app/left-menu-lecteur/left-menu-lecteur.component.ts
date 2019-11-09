@@ -20,20 +20,6 @@ export class LeftMenuLecteurComponent implements OnInit {
   constructor(private httpClient : HttpClient) { }
 
   ngOnInit() {
-    this.lireMangasPreferes();
-  }
-
-  lireMangasPreferes(){
-    //Passer sur local storage
-    this.httpClient.get<any[]>("http://localhost:8080/recupMangasPreferes").subscribe( 
-      (reponse)=> {
-        this.listeMangasHabituels = reponse;
-        console.log(this.listeMangasHabituels[0].mangas[0])
-        console.log(reponse)
-      },
-      (err) => {
-       console.log(err);
-    });
   }
 
   nextPage(){
