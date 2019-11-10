@@ -1,10 +1,10 @@
 <img src="{{mangaCover}}" class="card-img-top" alt="...">
-<div class="card-body d-flex flex-column">
-  <h4 class="card-title">{{mangaName}}</h4>
+<div class="card-body d-flex flex-column" style="background-color: #B0C4DE">
+  <h4 class="card-title" >{{mangaName}}</h4>
   <form class="card-text mt-auto" style="max-width: 150px;">
     <ul class="list-group align-self-end" style="max-height: 100px;overflow-y:scroll;">
       <li class="list-group-item list-group-item-success" *ngFor="let chap of chapitresTelecharges">
-          <a [routerLink]="['/lecteur',mangaName,chap]">{{chap}}</a>
+          <a [routerLink]="['/lecteur',mangaName,chap]" >{{chap}}</a>
       </li>
       <li class="list-group-item list-group-item-danger" *ngFor="let chap of tousLesChapitres">
         <a [routerLink]="['/lecteur',mangaName,chap]">{{chap}}</a>

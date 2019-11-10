@@ -1,11 +1,18 @@
 #left-menu{
-    grid-column:1; position : fixed;
-    width:10%;
+    width:150px;
+    position:fixed;
     height: 100%;
-    display: block
-    ;border-right:1px solid black;
+    left:0;
+    border-right:1px solid black;
 }
 
-#card-deck{
-    grid-column : 2 / 11;
+
+#content{
+    margin-left: 150px;
 }
+
+.card-deck{
+    grid-column : 2 / 11;
+    margin : 10px;
+}
+
