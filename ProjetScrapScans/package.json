@@ -23,6 +23,7 @@
     "angular-webstorage-service": "^1.0.2",
     "bootstrap": "^4.3.1",
     "eslint": "^6.6.0",
+    "font-awesome": "^4.7.0",
     "mdbootstrap": "^4.8.11",
     "popper": "^1.0.1",
     "rxjs": "~6.4.0",
