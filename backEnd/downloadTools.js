@@ -31,13 +31,13 @@ module.exports = {
         dirName += "/" + numScan + "/";
 
         //On teste si le chapitre est deja telechargé ou non
-        try{
+        try {
             fs.mkdirSync(dirName);
-        }catch(err){
+        } catch (err) {
             chapitreDejaTelecharge = true;
         }
-        
-        
+
+
         console.log(chapitreDejaTelecharge)
         if (!chapitreDejaTelecharge) {
             console.log("Lancement du telechargement de " + mangaName + " Scan N°" + numScan);
@@ -75,6 +75,21 @@ module.exports = {
         } catch (error) {
             console.log(error);
         }
+    },
+    verifierExistenceChapitre: async function(mangaName, chapitre) {
+        name = mangaName.replace(/ /gi, '-').toLowerCase();
+        mangaStr = SITE_URL + mangaName.replace(/ /gi, '-').toLowerCase() + '/' + chapitre + '/' + 1;
+        mangaStr = mangaStr.replace(/\s/g, '');
+        nouvScans = true;
+
+        await axios.get(mangaStr).then(async response => {
+            nouvScans = true;
+        }).catch(err => {
+            console.log("Pas de Nouveau Scan de " + mangaName + "\n" + mangaStr);
+            console.log("err " + err)
+            nouvScans = false;
+        })
+        return nouvScans
     }
 };
 
@@ -178,8 +193,7 @@ function updateMangaLibrary(mangaName, chapterNum, nbPages, userName) {
                 }
                 logAvantModif[userChoisi].library.push(aEcrire);
             }
-        }
-        else{
+        } else {
             aEcrire = {
                 username: userName,
                 library: [{

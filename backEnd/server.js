@@ -6,7 +6,7 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 const request = require('request');
 const express = require('express');
-const cors= require('cors');
+const cors = require('cors');
 const schedule = require('node-schedule');
 
 
@@ -18,9 +18,11 @@ fs.mkdir("temp", function (error) {
         console.log("Erreur creation dossier : \n" + error);
     }
 });
-if(!fs.existsSync(LIBRARY_URL)){
-    fs.mkdir('temp',err=>{console.log("err mkdir")})
-    fs.writeFileSync(LIBRARY_URL,'[]',(err)=>{});    
+if (!fs.existsSync(LIBRARY_URL)) {
+    fs.mkdir('temp', err => {
+        console.log("err mkdir")
+    })
+    fs.writeFileSync(LIBRARY_URL, '[]', (err) => {});
 }
 
 
@@ -28,7 +30,7 @@ if(!fs.existsSync(LIBRARY_URL)){
 // schedule.scheduleJob('* * * * *', function(){
 //     outingsWatcher.recupDerniersChapitresSortisv2();
 // });
-async function main(){
+async function main() {
     outingsWatcher.recupDerniersChapitresSortisv2("Remi");
 }
 main();
@@ -45,65 +47,76 @@ app.get('/', function (req, res) {
     res.send('Page Acueil');
 });
 //Poser Q Remi
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.setHeader('Content-Type', 'text/plain');
     res.send('Page Acueil');
 });
 
 
 //Requete pour checker si login est valide / verifier quel compte doit être chargé
-app.get("/checkUser/:userName", async function(req,res){
+app.get("/checkUser/:userName", async function (req, res) {
     console.log("[GET] /checkUser/" + req.params.userName);
-    res.json({resText : await userManager.isInDataBase(req.params.userName)});
+    res.json({
+        resText: await userManager.isInDataBase(req.params.userName)
+    });
 });
 
-
-//Requete des mangas pref (modif incoming)
-app.get('/recupMangasPreferes', async function (req, res) {
-    console.log("[GET] /recupMangasPreferes");
-    res.send(await fs.readFileSync("mangas.json"));
-})
-
-
 //Requete pour choper la couverture ?
-app.get('/cover/:mangaName', function(req,res){
+app.get('/cover/:mangaName', function (req, res) {
     console.log("[GET] /cover/" + req.params.mangaName);
     res.send()
 })
 
 
 //Requete des URLS des images d'un scan sur le site
-app.get('/lecteur/:mangaName/:numScan', async function(req,res){
+app.get('/lecteur/:mangaName/:numScan', async function (req, res) {
     console.log("[GET] /lecteur/" + req.params.mangaName + '/' + req.params.numScan);
-    res.json(await downloadTools.recupUrlsPages(req.params.mangaName, req.params.numScan));  
+    res.json(await downloadTools.recupUrlsPages(req.params.mangaName, req.params.numScan));
 })
 
 
 //Requete d'actualisation des derniers sorites
-app.get('/recupDerniereSorties/:userName', async function(req,res){
+app.get('/recupDerniereSorties/:userName', async function (req, res) {
     console.log("[GET] /recupDerniereSorties");
-    let jsonBiblio = await fs.readFileSync("temp/bibliotheque.json",(err)=>{
-        console.log("Recup dernieres sortie : erreur lecture bibliotheque\n"+err);
+    let jsonBiblio = await fs.readFileSync("temp/bibliotheque.json", (err) => {
+        console.log("Recup dernieres sortie : erreur lecture bibliotheque\n" + err);
     });
     let biblio = JSON.parse(jsonBiblio);
-    let userBiblio = biblio.find((elem)=>{
+    let userBiblio = biblio.find((elem) => {
         return elem.username == req.params.userName
     }).library
 
     res.json(userBiblio)
 });
 
+//Essai de telecharge un nouveau scan sur demande de l'utilisateur. Renvoi ok en cas de reussite, nope en cas d'echec
+app.get('/getNouveauChapitre/:manga/:chapitre', async function (req, res) {
+    console.log("[GET] /getNouveauChapitre/" + req.params.manga + "/" + req.params.chapitre)
+    name = req.params.manga.replace(/ /gi, '-').toLowerCase();
+
+    if (await downloadTools.verifierExistenceChapitre(name, req.params.chapitre)) {
+        await downloadTools.telechargerUnScan(name, req.params.chapitre, "Remi");
+        res.json({
+            status: 'OK'
+        })
+    } else {
+        res.json({
+            status: 'NOPE'
+        })
+    }
+})
+
+
 
 //make temp directory accessible from outside the app
-app.use("/temp",express.static(__dirname + '/temp'));
+app.use("/temp", express.static(__dirname + '/temp'));
 // Ajouter un error handler (middleware)
 app.use(function (error, request, response, next) {
     console.log(error.message)
     if (error) {
         if (error.message && error.message.match(/^\[custom message\]/gi)) {
             response.send(error.message.replace(/^\[custom message\]/gi, ""))
-        }
-        else {
+        } else {
             response.sendStatus(500).send("Internal error")
         }
     }

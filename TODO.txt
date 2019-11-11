@@ -1,11 +1,9 @@
 Backend :
-- Gestion BDD
-- Recup logo manga + stockage
-- Gestion plusieurs utilisateurs --> recupDerniersChapitresSortisv2 and make it compatible with usersData.json
+- Gestion BDD (refactore json)
 - Notification nouveaux scan (https://developer.mozilla.org/fr/docs/Web/API/notification/Using_Web_Notifications + mail)
 - Regarder hebergements
 
 Frontend :
-- Faire la page dernieres sorties
-- Modifier lecteur
-- Linker les pages
+- NouvPage : Modification user Data
+- modifier lecteur: (telecharger au lieu de scrapper quand nouvelle recherche)
+- nouvellesSortie  : - afficher tous les chapitre possibles d'un manga meme pas telecharges

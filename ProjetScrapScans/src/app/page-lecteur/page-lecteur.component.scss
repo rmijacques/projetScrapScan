@@ -1,11 +1,13 @@
 #left-menu{
-    grid-column:1; position : fixed;
-    width:10%;
+    width:150px;
+    position:fixed;
     height: 100%;
-    display: block
-    ;border-right:1px solid black;
+    left:0;
+    border-right:1px solid black;
 }
 
-#lecteur{
-    grid-column : 2/11;
+
+#content{
+    margin-left: 150px;
 }
+

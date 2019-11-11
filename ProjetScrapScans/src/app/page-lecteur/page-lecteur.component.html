@@ -1,8 +1,9 @@
-<div style="display:grid; grid-template-columns: repeat(10, 1fr);height: 100%">
-    <div id="left-menu" align="center">
-        <app-left-menu-lecteur (action)="onPageChange($event)" (mangaAChercher)="chargerNouveauScan($event)" [numPage]="index+1" [nbPages]="nbPages"></app-left-menu-lecteur>
-    </div>
-    <div id="lecteur">
-        <app-image-lecteur  [src]="imageAEnvoyer" [nomMangaEnRecherche]="mangaEnRecherche" [afficher]="rechercheTerminee" [numChap]="chapEnRecherche" (action)="onPageChange($event)"></app-image-lecteur>
-    </div>
+<div id="left-menu" align="center">
+  <app-left-menu-lecteur (action)="onPageChange($event)" (mangaAChercher)="chargerNouveauScan($event)"
+    [numPage]="index+1" [nbPages]="nbPages"></app-left-menu-lecteur>
+</div>
+<div id="content">
+  <app-image-lecteur [src]="imageAEnvoyer" [nomMangaEnRecherche]="mangaEnRecherche" [afficher]="rechercheTerminee"
+    [numChap]="chapEnRecherche" (action)="onPageChange($event)"></app-image-lecteur>
+    <button routerLink="/dernieresSorties" class="btn btn-outline-primary" style="position:fixed;top:10px;right:10px;"><i class="fa fa-home"></i></button>
 </div>
