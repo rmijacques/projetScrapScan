@@ -6,8 +6,8 @@
       <li class="list-group-item list-group-item-success" *ngFor="let chap of chapitresTelecharges">
           <a [routerLink]="['/lecteur',mangaName,chap]" >{{chap}}</a>
       </li>
-      <li class="list-group-item list-group-item-danger" *ngFor="let chap of tousLesChapitres">
-        <a [routerLink]="['/lecteur',mangaName,chap]">{{chap}}</a>
+      <li class="list-group-item list-group-item-danger" *ngFor="let chap of chapitresNonTelecharges">
+        <a (click)="telechargerLeChapitre(chap)">{{chap.num}} <i *ngIf="chap.dlEnCours == true" class="fa fa-spinner fa-spin"></i></a>
       </li>
     </ul>
   </form>

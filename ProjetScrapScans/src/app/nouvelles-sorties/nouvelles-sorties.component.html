@@ -1,16 +1,12 @@
-<!-- <div class="d-flex flex-row" style="height:100%;"> -->
-    <div id="left-menu">
-        <app-left-menu-lecteur style="height:100%;width:150px"></app-left-menu-lecteur>
-    </div>
-    <div id="content">
-        <div class="card-deck">
-            <app-manga-card 
-            class="card" 
-            *ngFor="let s of toutesLesSorties" 
-            [mangaName]="s.name" 
-            [chapitres]="s.chapters" 
-            style="max-width:150px;max-height: 200px"></app-manga-card>
-        </div>
-    </div>
-<!-- </div>  -->
-
+<div id="left-menu">
+  <app-left-menu-lecteur style="height:100%;width:150px"></app-left-menu-lecteur>
+</div>
+<div id="content">
+  <div class="card-deck">
+    <app-manga-card class="card" 
+    *ngFor="let s of toutesLesSorties" 
+    [mangaName]="s.name" 
+    [chapitres]="s.chapters"
+    style="max-width:150px;max-height: 200px"></app-manga-card>
+  </div>
+</div>

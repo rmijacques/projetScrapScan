@@ -93,11 +93,16 @@ app.get('/recupDerniereSorties/:userName', async function (req, res) {
 app.get('/getNouveauChapitre/:manga/:chapitre', async function (req, res) {
     console.log("[GET] /getNouveauChapitre/" + req.params.manga + "/" + req.params.chapitre)
     name = req.params.manga.replace(/ /gi, '-').toLowerCase();
+
     if (await downloadTools.verifierExistenceChapitre(name, req.params.chapitre)) {
         await downloadTools.telechargerUnScan(name, req.params.chapitre, "Remi");
-        res.send("OK")
+        res.json({
+            status: 'OK'
+        })
     } else {
-        res.send("NOPE")
+        res.json({
+            status: 'NOPE'
+        })
     }
 })
 
