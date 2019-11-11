@@ -2,6 +2,7 @@ import { Component, OnInit ,Output , Input, Injectable} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter } from '@angular/core';
 import {NgForm} from '@angular/forms';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-left-menu-lecteur',
@@ -17,7 +18,8 @@ export class LeftMenuLecteurComponent implements OnInit {
   listeMangasHabituels = [];
 
 
-  constructor(private httpClient : HttpClient) { }
+  constructor(private httpClient : HttpClient,
+              private router: Router) { }
 
   ngOnInit() {
     this.lireMangasPreferes();
@@ -46,6 +48,10 @@ export class LeftMenuLecteurComponent implements OnInit {
 
   onSubmit(form : NgForm){
     this.mangaAChercher.emit(form.value);
+  }
+
+  backToLibrary(){
+    this.router.navigate(["/dernieresSorties"]);
   }
 
 }
