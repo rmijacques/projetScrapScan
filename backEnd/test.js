@@ -1,5 +1,6 @@
 const downloadTools = require('./downloadTools.js');
 const outingsWatcher = require('./outingsWatcher.js');
+const userManager = require('./userManager.js')
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
@@ -10,4 +11,6 @@ const request = require('request');
 // var data = JSON.parse(file)[0]["mangaList"];
 // console.log(data);
 
-downloadTools.telechargerUnScan("one-piece", 900);
+// downloadTools.telechargerUnScan("shingeki-no-kyojin", 121);
+
+console.log(userManager.getLibrary("Baptiste"));

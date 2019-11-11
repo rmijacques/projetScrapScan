@@ -10,7 +10,7 @@ const LIBRARY_URL = "temp/bibliotheque.json";
 
 module.exports = {
     //Telecharge toutes les Pages d'un scan à partir d'un nom et d'un numéro de scan
-    telechargerUnScan: async function (mangaName, numScan, userName) {
+    telechargerUnScan: async function (mangaName, numScan) {
 
         //var html = await axios.get(urlPremierePage)
         let numPage = 1;
@@ -53,7 +53,7 @@ module.exports = {
             console.log("dossier non cree")
             numPage = fs.readdirSync(dirName).length;
         }
-        updateMangaLibrary(mangaName, numScan, numPage, userName);
+        updateMangaLibrary(mangaName, numScan, numPage);
 
 
     },
@@ -146,8 +146,9 @@ async function telechargerUnePage(urlPage, numPage, dossier) {
     }
 }
 
-function updateMangaLibrary(mangaName, chapterNum, nbPages, userName) {
+function updateMangaLibrary(mangaName, chapterNum, nbPages) {
     let srcPages = [];
+    let parsedChapterNum = parseInt(chapterNum, 10);
     let addrPage = "temp/" + mangaName + "/" + chapterNum + "/";
     let aEcrire;
     let jsonAvantModif = fs.readFileSync(LIBRARY_URL, (err) => {
@@ -155,7 +156,6 @@ function updateMangaLibrary(mangaName, chapterNum, nbPages, userName) {
     });
     let logAvantModif = JSON.parse(jsonAvantModif);
     let mangaDejaPresent = false;
-    let userChoisi;
     let mangaChoisi;
 
 
@@ -166,57 +166,37 @@ function updateMangaLibrary(mangaName, chapterNum, nbPages, userName) {
         srcPages[i - 1] = addrPage + i + ".png";
     }
     if (logAvantModif.length > 0) {
-        //On verifie la presence de l'utilisateur dans la biblio
-        userChoisi = logAvantModif.findIndex((user) => {
-            return user.username == userName;
+        //Si le manga est dans la biblio de l'user
+        mangaChoisi = logAvantModif.findIndex((manga) => {
+            return manga.name == mangaName;
         });
-        if (userChoisi != -1) {
-            //Si le manga est dans la biblio de l'user
-            mangaChoisi = logAvantModif[userChoisi]["library"].findIndex((manga) => {
-                return manga.name == mangaName
+        if (mangaChoisi != -1) {
+            logAvantModif[mangaChoisi].chapters.push({
+                numChapter: parsedChapterNum,
+                listePages: srcPages
             });
-            if (mangaChoisi != -1) {
-                logAvantModif[userChoisi].library[mangaChoisi].chapters.push({
-                    numChapter: chapterNum,
-                    listePages: srcPages
-                });
-                logAvantModif[userChoisi].library[mangaChoisi].chapters.sort((a, b) => {
-                    return b.numChapter - a.numChapter;
-                })
-            } else {
-                aEcrire = {
-                    name: mangaName,
-                    chapters: [{
-                        numChapter: chapterNum,
-                        listePages: srcPages
-                    }]
-                }
-                logAvantModif[userChoisi].library.push(aEcrire);
-            }
+            logAvantModif[mangaChoisi].chapters.sort((a, b) => {
+                return b.numChapter - a.numChapter;
+            })
         } else {
             aEcrire = {
-                username: userName,
-                library: [{
-                    name: mangaName,
-                    chapters: [{
-                        numChapter: chapterNum,
-                        listePages: srcPages
-                    }]
+                name: mangaName,
+                chapters: [{
+                    numChapter: parsedChapterNum,
+                    listePages: srcPages
                 }]
             }
             logAvantModif.push(aEcrire);
         }
+    
     }
     //Si la biblio est vide
     else {
         aEcrire = {
-            username: userName,
-            library: [{
-                name: mangaName,
-                chapters: [{
-                    numChapter: chapterNum,
-                    listePages: srcPages
-                }]
+            name: mangaName,
+            chapters: [{
+                numChapter: parsedChapterNum,
+                listePages: srcPages
             }]
         }
         logAvantModif.push(aEcrire);

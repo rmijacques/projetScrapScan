@@ -15,12 +15,12 @@ const LIBRARY_URL = "temp/bibliotheque.json";
 //Set up le directory de svg de scans
 fs.mkdir("temp", function (error) {
     if (error) {
-        console.log("Erreur creation dossier : \n" + error);
+        //console.log("Erreur creation dossier : \n" + error);
     }
 });
 if (!fs.existsSync(LIBRARY_URL)) {
     fs.mkdir('temp', err => {
-        console.log("err mkdir")
+        //console.log("err mkdir")
     })
     fs.writeFileSync(LIBRARY_URL, '[]', (err) => {});
 }
@@ -34,6 +34,8 @@ async function main() {
     outingsWatcher.recupDerniersChapitresSortisv2("Remi");
 }
 main();
+
+
 //Set up le server
 var app = express()
 app.use(cors())
@@ -61,7 +63,7 @@ app.get("/checkUser/:userName", async function (req, res) {
     });
 });
 
-//Requete pour choper la couverture ?
+//Requete pour choper la couverture
 app.get('/cover/:mangaName', function (req, res) {
     console.log("[GET] /cover/" + req.params.mangaName);
     res.send()
@@ -78,16 +80,10 @@ app.get('/lecteur/:mangaName/:numScan', async function (req, res) {
 //Requete d'actualisation des derniers sorites
 app.get('/recupDerniereSorties/:userName', async function (req, res) {
     console.log("[GET] /recupDerniereSorties");
-    let jsonBiblio = await fs.readFileSync("temp/bibliotheque.json", (err) => {
-        console.log("Recup dernieres sortie : erreur lecture bibliotheque\n" + err);
-    });
-    let biblio = JSON.parse(jsonBiblio);
-    let userBiblio = biblio.find((elem) => {
-        return elem.username == req.params.userName
-    }).library
-
-    res.json(userBiblio)
+    let jsonBiblio = await userManager.getLibrary(req.params.userName);
+    res.json(jsonBiblio);
 });
+
 
 //Essai de telecharge un nouveau scan sur demande de l'utilisateur. Renvoi ok en cas de reussite, nope en cas d'echec
 app.get('/getNouveauChapitre/:manga/:chapitre', async function (req, res) {
@@ -95,7 +91,7 @@ app.get('/getNouveauChapitre/:manga/:chapitre', async function (req, res) {
     name = req.params.manga.replace(/ /gi, '-').toLowerCase();
 
     if (await downloadTools.verifierExistenceChapitre(name, req.params.chapitre)) {
-        await downloadTools.telechargerUnScan(name, req.params.chapitre, "Remi");
+        await downloadTools.telechargerUnScan(name, req.params.chapitre);
         res.json({
             status: 'OK'
         })
@@ -105,7 +101,6 @@ app.get('/getNouveauChapitre/:manga/:chapitre', async function (req, res) {
         })
     }
 })
-
 
 
 //make temp directory accessible from outside the app
@@ -125,4 +120,4 @@ app.use(function (error, request, response, next) {
 
 
 app.listen(8080);
-console.log('Server started listenning on PORT:8080 ');
+console.log('Server started listenning on PORT:8080');
