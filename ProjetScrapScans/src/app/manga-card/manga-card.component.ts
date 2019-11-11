@@ -43,7 +43,7 @@ export class MangaCardComponent implements OnInit {
   telechargerLeChapitre(chap){
     chap.dlEnCours = true;
     try{
-      this.httpClient.get<any>("http://localhost:8080/getNouveauChapitre/"+this.mangaName+"/"+chap.num).subscribe( 
+      this.httpClient.get<any>("http://localhost:8080/getChapitre/"+this.mangaName+"/"+chap.num).subscribe( 
         (reponse)=> {
           console.log(reponse);
           if(reponse.status === "OK"){

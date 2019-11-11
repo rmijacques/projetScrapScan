@@ -1,9 +1,7 @@
 Backend :
-- Gestion BDD (refactore json)
 - Notification nouveaux scan (https://developer.mozilla.org/fr/docs/Web/API/notification/Using_Web_Notifications + mail)
 - Regarder hebergements
 
 Frontend :
 - NouvPage : Modification user Data
-- modifier lecteur: (telecharger au lieu de scrapper quand nouvelle recherche)
 - nouvellesSortie  : - afficher tous les chapitre possibles d'un manga meme pas telecharges

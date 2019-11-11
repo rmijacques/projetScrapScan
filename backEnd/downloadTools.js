@@ -22,7 +22,7 @@ module.exports = {
 
         fs.mkdir(dirName, function (error) {
             if (error) {
-                console.log("Erreur creation dossier : \n" + error);
+                //console.log("Erreur creation dossier : \n" + error);
             }
         });
         if (!fs.existsSync(dirName + "/cover.jpg")) {
@@ -76,6 +76,7 @@ module.exports = {
             console.log(error);
         }
     },
+
     verifierExistenceChapitre: async function(mangaName, chapitre) {
         name = mangaName.replace(/ /gi, '-').toLowerCase();
         mangaStr = SITE_URL + mangaName.replace(/ /gi, '-').toLowerCase() + '/' + chapitre + '/' + 1;

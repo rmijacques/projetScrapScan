@@ -33,7 +33,7 @@ export class PageLecteurComponent implements OnInit {
 
 
   constructor(private httpClient : HttpClient,
-    private _route: ActivatedRoute) { 
+              private _route: ActivatedRoute) { 
   }
 
   ngOnInit() {
@@ -48,7 +48,7 @@ export class PageLecteurComponent implements OnInit {
     this.mangaEnRecherche = scanAChercher.mangaName;
     this.chapEnRecherche = scanAChercher.numChap;
     this.imageAEnvoyer = "";
-    this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties/"+sessionStorage.getItem("user")).subscribe( 
+    this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties/" + sessionStorage.getItem("user")).subscribe( 
       (reponse)=> {
         this.index = 0;
         let chapitres = reponse.find((elem) => elem.name == scanAChercher.mangaName).chapters;
@@ -71,18 +71,20 @@ export class PageLecteurComponent implements OnInit {
     this.mangaEnRecherche = manga;
     this.chapEnRecherche = chapitre;
     this.imageAEnvoyer = "";
-    this.httpClient.get<any[]>("http://localhost:8080/lecteur/"+manga+"/"+chapitre).subscribe( 
+    this.httpClient.get<any>("http://localhost:8080/getChapitre/" + manga + "/" + chapitre).subscribe( 
       (reponse)=> {
         console.log(reponse);
         this.index = 0;
-        if(reponse[0] === 0){
-          alert('Impossible de trouver le chapitre '+chapitre+ ' de '+manga);
+        if(reponse.status == "NOPE"){
+          alert('Impossible de trouver le chapitre ' + chapitre + ' de '+ manga);
           if(this.listeImages.length > 0){
             this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
           }
         }
         else{
-          this.listeImages = reponse;
+          for(let i=0; i < reponse.urlList.length; i++){
+            this.listeImages[i] = "http://localhost:8080/" + reponse.urlList[i];
+          }
           this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
           this.nbPages = this.listeImages.length-1;
           this.manga = manga;

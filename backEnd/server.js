@@ -1,6 +1,7 @@
 const downloadTools = require('./downloadTools.js');
 const outingsWatcher = require('./outingsWatcher.js');
-const userManager = require('./userManager.js')
+const userManager = require('./userManager.js');
+const libraryManager = require('./libraryManager.js')
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
@@ -70,36 +71,46 @@ app.get('/cover/:mangaName', function (req, res) {
 })
 
 
-//Requete des URLS des images d'un scan sur le site
+// Requete des URLS des images d'un scan sur le site
 app.get('/lecteur/:mangaName/:numScan', async function (req, res) {
     console.log("[GET] /lecteur/" + req.params.mangaName + '/' + req.params.numScan);
     res.json(await downloadTools.recupUrlsPages(req.params.mangaName, req.params.numScan));
 })
 
 
-//Requete d'actualisation des derniers sorites
+//Requete des derniers sorites stockée sur le serveur
 app.get('/recupDerniereSorties/:userName', async function (req, res) {
     console.log("[GET] /recupDerniereSorties");
-    let jsonBiblio = await userManager.getLibrary(req.params.userName);
+    let jsonBiblio = await libraryManager.getLibraryByUser(req.params.userName);
     res.json(jsonBiblio);
 });
 
 
-//Essai de telecharge un nouveau scan sur demande de l'utilisateur. Renvoi ok en cas de reussite, nope en cas d'echec
-app.get('/getNouveauChapitre/:manga/:chapitre', async function (req, res) {
-    console.log("[GET] /getNouveauChapitre/" + req.params.manga + "/" + req.params.chapitre)
+//Recherche d'un nouveau scan par l'utilisateur. Renvoi ok en cas de reussite, nope en cas d'echec
+app.get('/getChapitre/:manga/:chapitre', async function (req, res) {
+    console.log("[GET] /getChapitre/" + req.params.manga + "/" + req.params.chapitre);
     name = req.params.manga.replace(/ /gi, '-').toLowerCase();
-
-    if (await downloadTools.verifierExistenceChapitre(name, req.params.chapitre)) {
-        await downloadTools.telechargerUnScan(name, req.params.chapitre);
+    let urlList = await libraryManager.getLibraryByScan(name, req.params.chapitre);
+    if (urlList){
         res.json({
-            status: 'OK'
-        })
+            urlList: urlList,
+            status: "OK"
+        });
     } else {
-        res.json({
-            status: 'NOPE'
-        })
+        if (await downloadTools.verifierExistenceChapitre(name, req.params.chapitre)) {
+            await downloadTools.telechargerUnScan(name, req.params.chapitre);
+            urlList = await libraryManager.getLibraryByScan(name, req.params.chapitre);
+            res.json({
+                urlList: urlList,
+                status: "OK"
+            });
+        } else {
+            res.json({
+                status: "NOPE"
+            });
+        }
     }
+
 })
 
 
