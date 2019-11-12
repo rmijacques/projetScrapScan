@@ -19,5 +19,4 @@ export class ImageLecteurComponent implements OnInit {
   nextPage(){
     this.action.emit(1);
   }
-
 }

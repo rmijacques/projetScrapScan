@@ -1,30 +1,31 @@
-    <div class="d-flex flex-column align-items-center">
-      <img id="logo" src="assets/logo.jpg">
-      <hr>
-      <div class="container">
-        <form autocomplete="off" (ngSubmit)="onSubmit(f)" #f="ngForm" class="justify-content-center">
-          <div class="form-group">
-            <label for="manga" class="col-form-label-sm">Nom du manga :</label>
-            <input list="listeMangas" type="text" id="manga" class="form-control form-control-sm left-menu-input"
-              name="nomManga" ngModel>
-            <datalist id="listeMangas">
-              <option *ngFor="let nomManga of listeMangasHabituels" value="{{nomManga}}">
-            </datalist>
-          </div>
-          <div class="form-group" style="margin-top:-10px">
-            <label for="chapitre" class="col-form-label-sm">Chapitre :</label>
-            <input type="text" id="chapitre" class="form-control form-control-sm left-menu-input" name="numChapitre"
-              ngModel>
-          </div>
-          <button class="btn btn-dark left-menu-input btn-sm" style="width:100%" type="submit">Charger scan</button>
+<div class="d-flex flex-column align-items-center">
+  <button type ="button" class="btn btn-primary left-menu-input" style="margin-top : 10px;" id ="library" (click)="backToLibrary()">Library</button>
+  <img id="logo" src="assets/logo.jpg">
+  <hr>
+  <div class="container">
+    <form autocomplete="off" (ngSubmit)="onSubmit(f)" #f="ngForm" class="justify-content-center">
+      <div class="form-group">
+        <label for="manga" class="col-form-label-sm">Nom du manga :</label>
+        <input list="listeMangas" type="text" id="manga" class="form-control form-control-sm left-menu-input"
+          name="nomManga" ngModel>
+        <datalist id="listeMangas">
+          <option *ngFor="let nomManga of listeMangasHabituels" value="{{nomManga}}">
+        </datalist>
+      </div>
+      <div class="form-group" style="margin-top:-10px">
+        <label for="chapitre" class="col-form-label-sm">Chapitre :</label>
+        <input type="text" id="chapitre" class="form-control form-control-sm left-menu-input" name="numChapitre"
+          ngModel>
+      </div>
+      <button class="btn btn-dark left-menu-input btn-sm" style="width:100%" type="submit">Charger scan</button>
 
-        </form>
-      </div>
-      <hr />
-      <div class="btn-group-vertical">
-        <button type="button" class="btn btn-sm btn-primary" (click)="nextPage()">Page suivante</button>
-        <button type="button" class="btn btn-sm btn-primary" style="margin-top : 10px;" id="prevPage" (click)="prevPage()">Page precedente</button>
-      </div>
-      <hr>
-      <h2 *ngIf="numPage">p {{ numPage }} / {{nbPages}}</h2>
-    </div>
+    </form>
+  </div>
+  <hr />
+  <div class="btn-group-vertical">
+    <button type="button" class="btn btn-sm btn-primary" (click)="nextPage()">Page suivante</button>
+    <button type="button" class="btn btn-sm btn-primary" style="margin-top : 10px;" id="prevPage" (click)="prevPage()">Page precedente</button>
+  </div>
+  <hr>
+  <h2 *ngIf="numPage">p {{ numPage }} / {{nbPages}}</h2>
+</div>

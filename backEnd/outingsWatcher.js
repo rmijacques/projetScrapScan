@@ -44,44 +44,40 @@ module.exports = {
         }
     },
 
-    recupDerniersChapitresSortisv2: async function () {
-        let mangasAVerifier = [];
+    recupDerniersChapitresSortisv2: async function (userName) {
         let mangaStr;
-        let resJSON;
         let nouvScans = false;
         let name;
 
         console.log("Searching for new scans...");
 
-        mangasAVerifier = userManager.getFullMangaList();
         let usersData = JSON.parse(fs.readFileSync('usersData.json'));
-        console.log(usersData)
-        let manga;
+        let userIndex = usersData.findIndex((elem) => {
+            return elem.name == userName;
+        });
+        //console.log(usersData)
         
-        for(let i=0;i<usersData.length;i++){
-            console.log("user data [i] " +usersData[i].name)
-            for(let j=0;j<usersData[i].mangaList.length;j++){
-                manga = usersData[i].mangaList[j]
+        
+        //console.log("user data [i] " + usersData[i].name)
+        for(let j=0;j<usersData[userIndex].mangaList.length;j++){
+            manga = usersData[userIndex].mangaList[j];
 
-                name = manga.name.replace(/ /gi, '-').toLowerCase();
-                mangaStr = SITE_URL + manga.name.replace(/ /gi, '-').toLowerCase() + '/' + manga.nextChapter + '/' + 1;
-                mangaStr = mangaStr.replace(/\s/g, '');
-                nouvScans = true;
+            name = manga.name.replace(/ /gi, '-').toLowerCase();
+            mangaStr = SITE_URL + manga.name.replace(/ /gi, '-').toLowerCase() + '/' + manga.nextChapter + '/' + 1;
+            mangaStr = mangaStr.replace(/\s/g, '');
+            nouvScans = true;
 
-                await axios.get(mangaStr).then(async response=>{
-                    console.log("Nouveau Scan de " + name);
+            await axios.get(mangaStr).then(async response=>{
+                console.log("Nouveau Scan de " + name);
 
-                    await downloadTools.telechargerUnScan(name, manga.nextChapter,usersData[i].name);
-                    userManager.updateList(manga.name,manga.nextChapter+1,usersData[i].name)
-                }).catch(err=>{
-                    console.log("Pas de Nouveau Scan de " + manga.name + "\n"+mangaStr);
-                    console.log("err "+err)
-                })
-            }
+                await downloadTools.telechargerUnScan(name, manga.nextChapter);
+                userManager.updateList(manga.name, manga.nextChapter + 1, usersData[userIndex].name);
+            }).catch(err=>{
+                console.log("Pas de Nouveau Scan de " + manga.name);// + "\n" + mangaStr);
+                //console.log("err "+err)
+            })
         }
-
         
-
     }
 };
 

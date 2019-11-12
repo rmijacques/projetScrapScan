@@ -1,10 +1,13 @@
 const fs = require("fs");
 
+const USER_DATA_URL = "usersData.json";
+const LIBRARY_URL = "temp/bibliotheque.json";
+
 module.exports = {
 
     getFullMangaList: function () {
         let result = [];
-        let usersData = JSON.parse(fs.readFileSync('usersData.json'));
+        let usersData = JSON.parse(fs.readFileSync(USER_DATA_URL));
         console.log(usersData)
         usersData.forEach(user => {
             user["mangaList"].forEach(manga => {
@@ -15,7 +18,7 @@ module.exports = {
     },
 
     updateList: function (mangaName, numChapter, userName) {
-        let usersData = JSON.parse(fs.readFileSync('usersData.json'));
+        let usersData = JSON.parse(fs.readFileSync(USER_DATA_URL));
 
         usersData.forEach(user => {
             if (user.name == userName) {
@@ -27,7 +30,7 @@ module.exports = {
             }
         });
         resJSON = JSON.stringify(usersData,null,4);
-        fs.writeFile('usersData.json', resJSON, 'utf8', function (err, data) {
+        fs.writeFile(USER_DATA_URL, resJSON, 'utf8', function (err, data) {
             if (err) {
                 console.log(err);
             }
@@ -36,7 +39,7 @@ module.exports = {
 
     isInDataBase: async function (userName) {
 
-        let usersData = await JSON.parse(fs.readFileSync('usersData.json'));
+        let usersData = await JSON.parse(fs.readFileSync(USER_DATA_URL));
 
         for (let user = 0; user < usersData.length; user++) {
             if (userName == usersData[user]["name"]) {
