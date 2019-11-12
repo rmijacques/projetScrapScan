@@ -43,27 +43,23 @@ export class PageLecteurComponent implements OnInit {
   }
   
   getListeUrlsParam(scanAChercher){
-    console.log(scanAChercher)
-    this.rechercheTerminee = false;
-    this.mangaEnRecherche = scanAChercher.mangaName;
-    this.chapEnRecherche = scanAChercher.numChap;
-    this.imageAEnvoyer = "";
-    this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties/" + sessionStorage.getItem("user")).subscribe( 
-      (reponse)=> {
-        this.index = 0;
-        let chapitres = reponse.find((elem) => elem.name == scanAChercher.mangaName).chapters;
-        console.log(chapitres);
-        this.listeImages = chapitres.find((elem) => elem.numChapter == scanAChercher.numChap).listePages
+    this.getListeUrls(scanAChercher.mangaName,scanAChercher.numChap);
+    // this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties/" + sessionStorage.getItem("user")).subscribe( 
+    //   (reponse)=> {
+    //     this.index = 0;
+    //     let chapitres = reponse.find((elem) => elem.name == scanAChercher.mangaName).chapters;
+    //     console.log(chapitres);
+    //     this.listeImages = chapitres.find((elem) => elem.numChapter == scanAChercher.numChap).listePages
         
-        for(let i=0;i<this.listeImages.length;i++){
-          this.listeImages[i] = "http://localhost:8080/" + this.listeImages[i];
-        }
-        this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
-        this.nbPages = this.listeImages.length-1;
-        this.manga = scanAChercher.mangaName;
-        this.chapitre = scanAChercher.numChap;
-        this.rechercheTerminee = true;
-      });
+    //     for(let i=0;i<this.listeImages.length;i++){
+    //       this.listeImages[i] = "http://localhost:8080/" + this.listeImages[i];
+    //     }
+    //     this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
+    //     this.nbPages = this.listeImages.length-1;
+    //     this.manga = scanAChercher.mangaName;
+    //     this.chapitre = scanAChercher.numChap;
+    //     this.rechercheTerminee = true;
+    //   });
   }
 
   getListeUrls(manga,chapitre){
