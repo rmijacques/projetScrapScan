@@ -17,6 +17,25 @@ module.exports = {
         return result;
     },
 
+    chapitreInUserData: function(userName,mangaName,chapterNum){
+        let result;
+        let usersData = JSON.parse(fs.readFileSync(USER_DATA_URL));
+        let userToCheck
+        userToCheck = usersData.find(user => user.name == userName);
+        if(userToCheck == undefined){
+            console.log("User inexistant")
+            return false;
+        }
+        console.log(userToCheck.mangaList[0].name + " " + userToCheck.mangaList[0].nextChapter)
+        console.log(mangaName + " "+ chapterNum)
+        result = userToCheck.mangaList.find(chapitre => chapitre.name === mangaName && chapitre.nextChapter === parseInt(chapterNum));
+        if(result == undefined){
+            console.log("Chapitre inexistant")
+            return false;
+        }
+        return true;
+    },
+
     updateList: function (mangaName, numChapter, userName) {
         let usersData = JSON.parse(fs.readFileSync(USER_DATA_URL));
 

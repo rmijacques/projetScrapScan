@@ -113,6 +113,21 @@ app.get('/getChapitre/:manga/:chapitre', async function (req, res) {
 
 })
 
+//Ajouter un manga a usersData
+app.get('/suivreUnManga/:userName/:mangaName/:numChapDepart', async function(req,res){
+    console.log("[GET] Suivre un manga "+req.params.userName+"/"+req.params.mangaName+"/"+req.params.numChapDepart);
+    if(userManager.chapitreInUserData(req.params.userName,req.params.mangaName,req.params.numChapDepart)){
+        res.json({ status: 'deja pres'});
+        return;
+    }
+    if (await downloadTools.verifierExistenceChapitre(req.params.mangaName, req.params.numChapDepart)){
+        userManager.updateList(req.params.userName,req.params.mangaName,req.params.numChapDepart);
+        res.json({ status : 'OK'});
+        return;
+    }
+    res.json({status : 'NOPE'});
+
+})
 
 //make temp directory accessible from outside the app
 app.use("/temp", express.static(__dirname + '/temp'));
