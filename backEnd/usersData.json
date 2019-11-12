@@ -3,12 +3,12 @@
         "name": "Baptiste",
         "mangaList": [
             {
-                "name": "One Piece",
-                "nextChapter": 962
+                "name": "one-piece",
+                "lastChapter": 962
             },
             {
-                "name": "Shingeki No Kyojin",
-                "nextChapter": 121
+                "name": "shingeki-no-kyojin",
+                "lastChapter": 121
             }
         ]
     },
@@ -16,8 +16,8 @@
         "name": "Remi",
         "mangaList": [
             {
-                "name": "One Piece",
-                "nextChapter": 962
+                "name": "one-piece",
+                "lastChapter": 961
             }
         ]
     }

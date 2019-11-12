@@ -4,6 +4,7 @@ const userManager = require('./userManager.js')
 const cheerio = require('cheerio');
 const fs = require('fs');
 const request = require('request');
+const tools = require('./tools.js');
 
 const SITE_URL = "https://www.lelscan-vf.com/manga/";
 
@@ -55,23 +56,16 @@ module.exports = {
         let userIndex = usersData.findIndex((elem) => {
             return elem.name == userName;
         });
-        //console.log(usersData)
-        
-        
-        //console.log("user data [i] " + usersData[i].name)
+
         for(let j=0;j<usersData[userIndex].mangaList.length;j++){
             manga = usersData[userIndex].mangaList[j];
-
-            name = manga.name.replace(/ /gi, '-').toLowerCase();
-            mangaStr = SITE_URL + manga.name.replace(/ /gi, '-').toLowerCase() + '/' + manga.nextChapter + '/' + 1;
-            mangaStr = mangaStr.replace(/\s/g, '');
             nouvScans = true;
 
             await axios.get(mangaStr).then(async response=>{
                 console.log("Nouveau Scan de " + name);
 
-                await downloadTools.telechargerUnScan(name, manga.nextChapter);
-                userManager.updateList(manga.name, manga.nextChapter + 1, usersData[userIndex].name);
+                await downloadTools.telechargerUnScan(name, manga.lastChapter);
+                userManager.updateList(manga.name, manga.lastChapter + 1, usersData[userIndex].name);
             }).catch(err=>{
                 console.log("Pas de Nouveau Scan de " + manga.name);// + "\n" + mangaStr);
                 //console.log("err "+err)

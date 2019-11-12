@@ -1,4 +1,5 @@
 const fs = require('fs');
+const tools = require('./tools.js')
 
 const USER_DATA_URL = "usersData.json";
 const LIBRARY_URL = "temp/bibliotheque.json";
@@ -16,7 +17,7 @@ module.exports = {
 
         //Va chercher dans la librairie tout les chapitres existant que le user suit
         userLibrary.mangaList.forEach((elem) => {
-            let mangaName = elem.name.replace(/ /gi, '-').toLowerCase();
+            let mangaName = tools.formatMangaName(elem.name);
             //console.log(mangaName);
             let manga = library.find((elem) => {
                 return elem.name == mangaName;
@@ -33,10 +34,11 @@ module.exports = {
     getLibraryByScan: async function (mangaName, numChapter) {
         let parseNumChapter = parseInt(numChapter, 10);
         let library = JSON.parse(fs.readFileSync(LIBRARY_URL));
-
         let manga = library.find((elem) => {
             return elem.name == mangaName;
         });
+        
+        mangaName = tools.formatMangaName(mangaName);
         
         if (manga == undefined) {
             return undefined;

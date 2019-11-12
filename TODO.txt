@@ -1,7 +1,12 @@
 Backend :
 - Notification nouveaux scan (https://developer.mozilla.org/fr/docs/Web/API/notification/Using_Web_Notifications + mail)
+- userData.json : sauvegarder lastCapter et currentChapter dans deux var bien définies
+- télécharger automatiquement currentChapter aprés modif
 - Regarder hebergements
+- afficher la première page du manga dés quelle est téléchargée 
 
 Frontend :
-- NouvPage : Modification user Data
 - nouvellesSortie  : - afficher tous les chapitre possibles d'un manga meme pas telecharges
+- suivreUnManga : arreter d'afficher l'icone de chargement aprés l'ajout
+- ne pas dire ajout de scan quand le scan existe dejà dans le userData.json
+- afficher la première page du manga dés quelle est téléchargée 

@@ -18,8 +18,7 @@ export class LeftMenuLecteurComponent implements OnInit {
   listeMangasHabituels = [];
 
 
-  constructor(private httpClient : HttpClient,
-              private router: Router) { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
   }

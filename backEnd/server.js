@@ -89,8 +89,9 @@ app.get('/recupDerniereSorties/:userName', async function (req, res) {
 //Recherche d'un nouveau scan par l'utilisateur. Renvoi ok en cas de reussite, nope en cas d'echec
 app.get('/getChapitre/:manga/:chapitre', async function (req, res) {
     console.log("[GET] /getChapitre/" + req.params.manga + "/" + req.params.chapitre);
-    name = req.params.manga.replace(/ /gi, '-').toLowerCase();
+    let name = req.params.manga;
     let urlList = await libraryManager.getLibraryByScan(name, req.params.chapitre);
+    
     if (urlList){
         res.json({
             urlList: urlList,
@@ -123,6 +124,7 @@ app.get('/suivreUnManga/:userName/:mangaName/:numChapDepart', async function(req
     if (await downloadTools.verifierExistenceChapitre(req.params.mangaName, req.params.numChapDepart)){
         userManager.updateList(req.params.userName,req.params.mangaName,req.params.numChapDepart);
         res.json({ status : 'OK'});
+        downloadTools.telechargerUnScan
         return;
     }
     res.json({status : 'NOPE'});

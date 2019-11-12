@@ -13,4 +13,8 @@ const request = require('request');
 
 // downloadTools.telechargerUnScan("shingeki-no-kyojin", 121);
 
-console.log(userManager.getLibrary("Baptiste"));
+let abc = [1,2,3];
+let b;
+if((b = abc.find((elem) => elem == 1)) == 1){
+    console.log("true")
+}

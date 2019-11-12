@@ -9,7 +9,7 @@ import { SuivreUnMangaComponent } from './suivre-un-manga/suivre-un-manga.compon
 const routes: Routes = [
   {path :'lecteur/:mangaName/:numChap',component : PageLecteurComponent },
   {path :'dernieresSorties',component : NouvellesSortiesComponent },
-  {path : 'suivre-un-manga',component : SuivreUnMangaComponent},
+  {path : 'suivreUnManga',component : SuivreUnMangaComponent},
   {path :'',component : LoginComponent },
 ];
 

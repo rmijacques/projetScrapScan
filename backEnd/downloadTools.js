@@ -3,6 +3,8 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 const request = require('request');
 
+const tools = require('./tools.js');
+
 const SITE_URL = "https://www.lelscan-vf.com/manga/";
 const COVER_URL = "https://www.lelscan-vf.com/uploads/manga/";
 const LIBRARY_URL = "temp/bibliotheque.json";
@@ -14,7 +16,7 @@ module.exports = {
 
         //var html = await axios.get(urlPremierePage)
         let numPage = 1;
-        let name = mangaName.replace(/ /gi, '-').toLowerCase();
+        let name = formatMangaName(mangaName);
         let urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
         let urlCover = COVER_URL + name + '/cover/cover_250x350.jpg';
         let dirName = "temp/" + mangaName;
@@ -29,8 +31,8 @@ module.exports = {
             download(urlCover, dirName + "/cover.jpg", (err) => {});
         }
         dirName += "/" + numScan + "/";
-
-        //On teste si le chapitre est deja telechargé ou non
+        //TODO : ameliorer
+        //On teste si le chapitre est deja telechargé ou non + a ameliorer
         try {
             fs.mkdirSync(dirName);
         } catch (err) {
@@ -62,7 +64,7 @@ module.exports = {
         try {
             var ret = [];
             var numPage = 1;
-            var name = mangaName.replace(/ /gi, '-').toLowerCase();
+            var name = tools.formatMangaName(mangaName);
             var urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
             var index = 0;
             while ((ret[index] = await recupUrlImage(urlPage, numPage, "scans/" + mangaName + "/")) != 0) {
@@ -78,8 +80,8 @@ module.exports = {
     },
 
     verifierExistenceChapitre: async function(mangaName, chapitre) {
-        name = mangaName.replace(/ /gi, '-').toLowerCase();
-        mangaStr = SITE_URL + mangaName.replace(/ /gi, '-').toLowerCase() + '/' + chapitre + '/' + 1;
+        name = tools.formatMangaName(mangaName);
+        mangaStr = SITE_URL + name + '/' + chapitre + '/' + 1;
         mangaStr = mangaStr.replace(/\s/g, '');
         nouvScans = true;
 

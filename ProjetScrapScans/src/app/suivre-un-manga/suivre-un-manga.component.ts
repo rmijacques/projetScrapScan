@@ -1,6 +1,7 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-suivre-un-manga',
@@ -10,8 +11,9 @@ import { NgForm } from '@angular/forms';
 
 @Injectable()
 export class SuivreUnMangaComponent implements OnInit {
-
-  constructor(private router: Router) { }
+  ajoutEnCours = false;
+  constructor(private router: Router,
+            private httpClient : HttpClient) { }
 
   ngOnInit() {
   }
@@ -22,7 +24,14 @@ export class SuivreUnMangaComponent implements OnInit {
 
   onSubmit(form: NgForm){
     let infos = form.value;
-    
+    this.ajoutEnCours = true;
+    this.httpClient.get<any>("http://localhost:8080/suivreUnManga/"+sessionStorage.getItem("user")+"/"+infos.nomManga+"/"+infos.numChapitre).subscribe(function(reponse){
+      this.ajoutEnCours = false; 
+      if(reponse.status == 'OK'){
+        alert("Manga ajouté");
+      }
+      
+    });
   }
 
 }
