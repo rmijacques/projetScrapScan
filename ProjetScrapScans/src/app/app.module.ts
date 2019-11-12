@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { NouvellesSortiesComponent } from './nouvelles-sorties/nouvelles-sorties.component';
 import { LoginComponent } from './login/login.component';
 import { MangaCardComponent } from './manga-card/manga-card.component';
+import { SuivreUnMangaComponent } from './suivre-un-manga/suivre-un-manga.component';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { MangaCardComponent } from './manga-card/manga-card.component';
     LeftMenuLecteurComponent,
     NouvellesSortiesComponent,
     LoginComponent,
-    MangaCardComponent
+    MangaCardComponent,
+    SuivreUnMangaComponent
   ],
   imports: [
     BrowserModule,

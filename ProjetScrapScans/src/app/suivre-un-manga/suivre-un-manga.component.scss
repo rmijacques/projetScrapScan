@@ -1,0 +1,18 @@
+#left-menu{
+    width:150px;
+    position:fixed;
+    height: 100%;
+    left:0;
+    border-right:1px solid black;
+}
+
+
+#content{
+    margin-left: 150px;
+}
+
+.centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }

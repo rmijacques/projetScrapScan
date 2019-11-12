@@ -1,0 +1,25 @@
+<div id="left-menu">
+  <app-left-menu-lecteur style="height:100%;width:150px" (mangaAChercher)="goToLecteurWith($event)">
+  </app-left-menu-lecteur>
+</div>
+<div id="content" style="text-align:center;width:80%">
+  <h1>Ajouter un manga :</h1>
+  <br />
+  <form autocomplete="off" (ngSubmit)="onSubmit(f)" #f="ngForm">
+    <div class="form-group row">
+      <label for="nomManga" class="col-sm-2 col-form-label">Manga</label>
+      <div class="col-sm-10">
+        <input type="email" class="form-control" id="nomManga" placeholder="Nom du manga" ngModel>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="numChapitres" class="col-sm-2 col-form-label">Chapitre</label>
+      <div class="col-sm-10">
+        <input type="number" class="form-control" id="numChapitres" placeholder="Num du chapitre" ngModel>
+      </div>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Ajouter</button>
+    </div>
+  </form>
+</div>
