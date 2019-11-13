@@ -5,6 +5,8 @@ Backend :
 - Regarder hebergements
 - afficher la première page du manga dés quelle est téléchargée 
 - regarder le packagé apidocjs pour la generation de la documentation
+- dans userData: stocker le nom du manga formatté ET non-formatté pour avoir un joli titre sur nouvelles sorties
+
 
 Frontend :
 - nouvellesSortie  : - afficher tous les chapitre possibles d'un manga meme pas telecharges
