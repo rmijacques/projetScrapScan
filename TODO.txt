@@ -4,6 +4,7 @@ Backend :
 - télécharger automatiquement currentChapter aprés modif
 - Regarder hebergements
 - afficher la première page du manga dés quelle est téléchargée 
+- regarder le packagé apidocjs pour la generation de la documentation
 
 Frontend :
 - nouvellesSortie  : - afficher tous les chapitre possibles d'un manga meme pas telecharges
