@@ -2,6 +2,7 @@ const downloadTools = require('./downloadTools.js');
 const outingsWatcher = require('./outingsWatcher.js');
 const userManager = require('./userManager.js');
 const libraryManager = require('./libraryManager.js')
+const tools = require('./tools.js');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
@@ -34,11 +35,14 @@ if (!fs.existsSync(LIBRARY_URL)) {
 async function main() {
     outingsWatcher.recupDerniersChapitresSortisv2("Remi");
 }
-main();
+
 
 
 //Set up le server
 var app = express()
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
 app.use(cors())
 
 console.log("Server sets up");
@@ -49,70 +53,73 @@ app.get('/', function (req, res) {
     throw new Error('[custom ]ops ')
     res.send('Page Acueil');
 });
-//Poser Q Remi
-app.get('/', function (req, res) {
-    res.setHeader('Content-Type', 'text/plain');
-    res.send('Page Acueil');
-});
 
 
-//Requete pour checker si login est valide / verifier quel compte doit être chargé
-app.get("/checkUser/:userName", async function (req, res) {
-    console.log("[GET] /checkUser/" + req.params.userName);
-    res.json({
-        resText: await userManager.isInDataBase(req.params.userName)
+//Sockets
+io.on('connection',function(socket){
+    console.log('Client connecte');
+    socket.on('checkUser',async function(userName){
+        let ret = await userManager.isInDataBase(userName);  
+        socket.emit('checkUser',ret);
     });
-});
 
-//Requete pour choper la couverture
-app.get('/cover/:mangaName', function (req, res) {
-    console.log("[GET] /cover/" + req.params.mangaName);
-    res.send()
-})
+    //Recup la liste des urls d'un chapitre et la renvoie
+    socket.on('lecteur',async function(chapitre){
+        let mangaName = chapitre.name;
+        let numChapter = chapitre.num;
+        let ret = await downloadTools.recupUrlsPages(mangaName,numScan);
+        socket.emit('lecteur',JSON.stringify(ret));
+    });
 
+    //Recup les dernieres sortie
+    socket.on('recupDernieresSorties',await function(userName){
+        let jsonBiblio = await libraryManager.getLibraryByUser(userName);
+        socket.emit('recupDernieresSorties',jsonBiblio);   
+    });
 
-// Requete des URLS des images d'un scan sur le site
-app.get('/lecteur/:mangaName/:numScan', async function (req, res) {
-    console.log("[GET] /lecteur/" + req.params.mangaName + '/' + req.params.numScan);
-    res.json(await downloadTools.recupUrlsPages(req.params.mangaName, req.params.numScan));
-})
-
-
-//Requete des derniers sorites stockée sur le serveur
-app.get('/recupDerniereSorties/:userName', async function (req, res) {
-    console.log("[GET] /recupDerniereSorties");
-    let jsonBiblio = await libraryManager.getLibraryByUser(req.params.userName);
-    res.json(jsonBiblio);
-});
-
-
-//Recherche d'un nouveau scan par l'utilisateur. Renvoi ok en cas de reussite, nope en cas d'echec
-app.get('/getChapitre/:manga/:chapitre', async function (req, res) {
-    console.log("[GET] /getChapitre/" + req.params.manga + "/" + req.params.chapitre);
-    let name = req.params.manga;
-    let urlList = await libraryManager.getLibraryByScan(name, req.params.chapitre);
-    
-    if (urlList){
-        res.json({
-            urlList: urlList,
-            status: "OK"
-        });
-    } else {
-        if (await downloadTools.verifierExistenceChapitre(name, req.params.chapitre)) {
-            await downloadTools.telechargerUnScan(name, req.params.chapitre);
-            urlList = await libraryManager.getLibraryByScan(name, req.params.chapitre);
-            res.json({
-                urlList: urlList,
-                status: "OK"
-            });
+    //Recherche un nouveau scan (on le telecharge si il n'est pas present et qu'il existe) et renvoi l'url de ses pages
+    //In: chapitre = {mangaName,numChapter}
+    socket.on('getChapitre',async function(chapitre){
+        let name = tools.formatMangaName(chapitre.mangaName);
+        let numChapter = chapitre.num;
+        let urlList = await libraryManager.getLibraryByScan(name, numChapter);
+        if (urlList){
+            socket.emit(JSON.stringify({
+                urList: urlList,
+                status : "OK"
+            }))
         } else {
-            res.json({
-                status: "NOPE"
-            });
+            if (await downloadTools.verifierExistenceChapitre(name, numCHapter)) {
+                await downloadTools.telechargerUnScan(name, numChapter);
+                urlList = await libraryManager.getLibraryByScan(name, numChapter);
+                socket.emit(JSON.stringify({
+                    urList: urlList,
+                    status : "OK"
+                }))
+            } else {
+                socket.emit(JSON.stringify({
+                    status : "NOPE"
+                }))
+            }
         }
-    }
-
+    });
+    socket.on('suivreUnManga',function(infos){
+        let userName = infos.userName;
+        let mangaName = infos.mangaName;
+        let numChapter = infos.numChapter;
+        if(userManager.chapitreInUserData(userName,mangaName,numChapter)){
+            socket.emit(json.stringify({ status: 'deja pres'}));
+            return;
+        }
+        if (await downloadTools.verifierExistenceChapitre(mangaName, numCHapter)){
+            userManager.updateList(req.params.userName,mangaName,numCHapter);
+            socket.emit(json.stringify({ status: 'OK'}));
+            return;
+        }
+        socket.emit('suivreUnManga',json.stringify({ status: 'NOPE'}));
+    })
 })
+
 
 //Ajouter un manga a usersData
 app.get('/suivreUnManga/:userName/:mangaName/:numChapDepart', async function(req,res){
@@ -124,7 +131,6 @@ app.get('/suivreUnManga/:userName/:mangaName/:numChapDepart', async function(req
     if (await downloadTools.verifierExistenceChapitre(req.params.mangaName, req.params.numChapDepart)){
         userManager.updateList(req.params.userName,req.params.mangaName,req.params.numChapDepart);
         res.json({ status : 'OK'});
-        downloadTools.telechargerUnScan
         return;
     }
     res.json({status : 'NOPE'});
@@ -147,5 +153,5 @@ app.use(function (error, request, response, next) {
 
 
 
-app.listen(8080);
+server.listen(8080);
 console.log('Server started listenning on PORT:8080');
