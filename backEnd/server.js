@@ -56,68 +56,74 @@ app.get('/', function (req, res) {
 
 
 //Sockets
-io.on('connection',function(socket){
+io.on('connection', function(socket){
     console.log('Client connecte');
-    socket.on('checkUser',async function(userName){
-        let ret = await userManager.isInDataBase(userName);  
-        socket.emit('checkUser',ret);
+    socket.on('checkUser',async function(message){
+        message = JSON.parse(message);
+        console.log(message.userName);
+        let ret = await userManager.isInDataBase(message.userName);  
+        socket.emit('checkUser', JSON.stringify({userName: ret}));
     });
 
     //Recup la liste des urls d'un chapitre et la renvoie
-    socket.on('lecteur',async function(chapitre){
-        let mangaName = chapitre.name;
-        let numChapter = chapitre.num;
+    socket.on('lecteur',async function(message){
+        message = JSON.parse(message);
+        let mangaName = message.name;
+        let numChapter = message.num;
         let ret = await downloadTools.recupUrlsPages(mangaName,numScan);
-        socket.emit('lecteur',JSON.stringify(ret));
+        socket.emit('lecteur', JSON.stringify(ret));
     });
 
     //Recup les dernieres sortie
-    socket.on('recupDernieresSorties',await function(userName){
-        let jsonBiblio = await libraryManager.getLibraryByUser(userName);
-        socket.emit('recupDernieresSorties',jsonBiblio);   
+    socket.on('recupDernieresSorties',async function(message){
+        message = JSON.parse(message)
+        let jsonBiblio = await libraryManager.getLibraryByUser(message.userName);
+        socket.emit('recupDernieresSorties',JSON.stringify(jsonBiblio));
     });
 
     //Recherche un nouveau scan (on le telecharge si il n'est pas present et qu'il existe) et renvoi l'url de ses pages
     //In: chapitre = {mangaName,numChapter}
-    socket.on('getChapitre',async function(chapitre){
+    socket.on('getChapitre', async function(chapitre){
+        chapitre = JSON.parse(chapitre);
         let name = tools.formatMangaName(chapitre.mangaName);
-        let numChapter = chapitre.num;
+        let numChapter = chapitre.numChapter;
         let urlList = await libraryManager.getLibraryByScan(name, numChapter);
         if (urlList){
-            socket.emit(JSON.stringify({
+            socket.emit('getChapitre', JSON.stringify({
                 urList: urlList,
                 status : "OK"
             }))
         } else {
-            if (await downloadTools.verifierExistenceChapitre(name, numCHapter)) {
+            if (await downloadTools.verifierExistenceChapitre(name, numChapter)) {
                 await downloadTools.telechargerUnScan(name, numChapter);
                 urlList = await libraryManager.getLibraryByScan(name, numChapter);
-                socket.emit(JSON.stringify({
+                socket.emit('getChapitre', JSON.stringify({
                     urList: urlList,
                     status : "OK"
                 }))
             } else {
-                socket.emit(JSON.stringify({
+                socket.emit('getChapitre', JSON.stringify({
                     status : "NOPE"
                 }))
             }
         }
     });
-    socket.on('suivreUnManga',function(infos){
+    socket.on('suivreUnManga', async function(infos){
+        infos = JSON.parse(infos)
         let userName = infos.userName;
         let mangaName = infos.mangaName;
         let numChapter = infos.numChapter;
         if(userManager.chapitreInUserData(userName,mangaName,numChapter)){
-            socket.emit(json.stringify({ status: 'deja pres'}));
+            socket.emit('suivreUnManga', JSON.stringify({ status: 'deja pres'}));
             return;
         }
-        if (await downloadTools.verifierExistenceChapitre(mangaName, numCHapter)){
-            userManager.updateList(req.params.userName,mangaName,numCHapter);
-            socket.emit(json.stringify({ status: 'OK'}));
+        if (await downloadTools.verifierExistenceChapitre(mangaName, numChapter)){
+            userManager.updateList(req.params.userName,mangaName,numChapter);
+            socket.emit('suivreUnManga', JSON.stringify({ status: 'OK'}));
             return;
         }
-        socket.emit('suivreUnManga',json.stringify({ status: 'NOPE'}));
-    })
+        socket.emit('suivreUnManga',JSON.stringify({ status: 'NOPE'}));
+    });
 })
 
 

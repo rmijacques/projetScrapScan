@@ -16,7 +16,7 @@ module.exports = {
 
         //var html = await axios.get(urlPremierePage)
         let numPage = 1;
-        let name = formatMangaName(mangaName);
+        let name = tools.formatMangaName(mangaName);
         let urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
         let urlCover = COVER_URL + name + '/cover/cover_250x350.jpg';
         let dirName = "temp/" + mangaName;

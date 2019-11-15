@@ -12,7 +12,9 @@ import { NouvellesSortiesComponent } from './nouvelles-sorties/nouvelles-sorties
 import { LoginComponent } from './login/login.component';
 import { MangaCardComponent } from './manga-card/manga-card.component';
 import { SuivreUnMangaComponent } from './suivre-un-manga/suivre-un-manga.component';
-
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+ 
+const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
 
 @NgModule({
   declarations: [
@@ -29,7 +31,8 @@ import { SuivreUnMangaComponent } from './suivre-un-manga/suivre-un-manga.compon
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule, 
+    SocketIoModule.forRoot(config)
   ],
   providers: [],
   bootstrap: [AppComponent]

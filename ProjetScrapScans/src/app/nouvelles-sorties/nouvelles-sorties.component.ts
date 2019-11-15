@@ -1,6 +1,6 @@
 import { Component, OnInit, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-nouvelles-sorties',
@@ -11,15 +11,20 @@ import { Router } from '@angular/router';
 @Injectable()
 export class NouvellesSortiesComponent implements OnInit {
   toutesLesSorties : any[] = [];
-  constructor(private httpClient : HttpClient,
+  constructor(private socket: Socket,
               private router: Router) { }
 
+  bindSocket() {
+    this.socket.on("recupDernieresSorties", (reponse)=> {
+      this.toutesLesSorties = JSON.parse(reponse);
+    });
+  }
+
+
   ngOnInit() {
-    this.httpClient.get<any[]>("http://localhost:8080/recupDerniereSorties/"+sessionStorage.getItem("user")).subscribe( 
-      (reponse)=> {
-        this.toutesLesSorties = reponse;
-      });
-    
+    this.socket.emit("recupDernieresSorties", JSON.stringify({userName: sessionStorage.getItem("user")}));
+
+    this.bindSocket();
   }
 
   goToLecteurWith(recherche){
