@@ -52,5 +52,25 @@ module.exports = {
                 return scan.listePages;
             }
         }
+    },
+
+    mangaInLibrary: function(mangaName){
+        let library = JSON.parse(fs.readFileSync(LIBRARY_URL));
+        mangaName = tools.formatMangaName(mangaName);
+        let recherche = library.find((elem)=>elem.name == mangaName);
+        return recherche != undefined;
+    },
+
+    chapitreInLibrary: function(mangaName,numChapter){
+        let library = JSON.parse(fs.readFileSync(LIBRARY_URL));
+        mangaName = tools.formatMangaName(mangaName);
+        let trouverManga = library.find((elem)=>elem.name);
+    
+        if(trouverManga){
+            return trouverManga.chapters.find(({numChapter:c1}) => c1 === numChapter) != undefined;
+        }
+        else{
+            return false;
+        }
     }
 }

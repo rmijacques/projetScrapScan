@@ -2,7 +2,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
 const request = require('request');
-
+const libraryManager = require('./libraryManager.js')
 const tools = require('./tools.js');
 
 const SITE_URL = "https://www.lelscan-vf.com/manga/";
@@ -11,10 +11,8 @@ const LIBRARY_URL = "temp/bibliotheque.json";
 
 
 module.exports = {
-    //Telecharge toutes les Pages d'un scan à partir d'un nom et d'un numéro de scan
-    telechargerUnScan: async function (mangaName, numScan) {
-
-        //var html = await axios.get(urlPremierePage)
+    //Telecharge toutes les Pages d'un scan à partir d'un nom et d'un numéro de scan et renvoie chaque page au client quand elle est telecharge
+    telechargerUnScanPageParPage: async function (mangaName, numScan,socket) {
         let numPage = 1;
         let name = tools.formatMangaName(mangaName);
         let urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
@@ -22,42 +20,85 @@ module.exports = {
         let dirName = "temp/" + mangaName;
         let chapitreDejaTelecharge = false;
 
-        fs.mkdir(dirName, function (error) {
-            if (error) {
-                //console.log("Erreur creation dossier : \n" + error);
-            }
-        });
+        //Creation dossier du manga si inexistant
+        if(libraryManager.mangaInLibrary(mangaName)){
+            fs.mkdir(dirName, (err)=>{});
+        }
+        console.log("");
+        //Ajout de la cover si inexistante
         if (!fs.existsSync(dirName + "/cover.jpg")) {
             download(urlCover, dirName + "/cover.jpg", (err) => {});
         }
         dirName += "/" + numScan + "/";
-        //TODO : ameliorer
-        //On teste si le chapitre est deja telechargé ou non + a ameliorer
-        try {
+        
+        if(libraryManager.chapitreInLibrary(mangaName,numScan)){
             fs.mkdirSync(dirName);
-        } catch (err) {
+        }
+        else {
             chapitreDejaTelecharge = true;
         }
 
-
-        console.log(chapitreDejaTelecharge)
         if (!chapitreDejaTelecharge) {
             console.log("Lancement du telechargement de " + mangaName + " Scan N°" + numScan);
             while (await telechargerUnePage(urlPage, numPage, dirName) == true) {
                 console.log(urlPage);
+                sendNewPageUrlToClient(mangaName,numScan,numPage,socket);
                 numPage++;
                 urlSepare = urlPage.split('/');
-                urlPage = '';
                 urlSepare[urlSepare.length - 1] = numPage;
                 urlPage = urlSepare.join('/');
             }
-        } else {
-            console.log("dossier non cree")
+        } 
+        else {
+            console.log("Le chapitre a deja ete telechargé");
             numPage = fs.readdirSync(dirName).length;
         }
         updateMangaLibrary(mangaName, numScan, numPage);
+    },
 
+    //Telecharge toutes les Pages d'un scan à partir d'un nom et d'un numéro de scan
+    telechargerUnScanPageParPage: async function (mangaName, numScan,socket) {
+        let numPage = 1;
+        let name = formatMangaName(mangaName);
+        let urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
+        let urlCover = COVER_URL + name + '/cover/cover_250x350.jpg';
+        let dirName = "temp/" + mangaName;
+        let chapitreDejaTelecharge = false;
 
+        //Creation dossier du manga si inexistant
+        if(libraryManager.mangaInLibrary(mangaName)){
+            fs.mkdir(dirName, (err)=>{});
+        }
+        
+        //Ajout de la cover si inexistante
+        if (!fs.existsSync(dirName + "/cover.jpg")) {
+            download(urlCover, dirName + "/cover.jpg", (err) => {});
+        }
+        dirName += "/" + numScan + "/";
+        
+        if(libraryManager.chapitreInLibrary(mangaName,numScan)){
+            fs.mkdirSync(dirName);
+        }
+        else {
+            chapitreDejaTelecharge = true;
+        }
+
+        if (!chapitreDejaTelecharge) {
+            console.log("Lancement du telechargement de " + mangaName + " Scan N°" + numScan);
+            while (await telechargerUnePage(urlPage, numPage, dirName) == true) {
+                console.log(urlPage);
+                sendNewPageUrlToClient(mangaName,numScan,numPage,socket);
+                numPage++;
+                urlSepare = urlPage.split('/');
+                urlSepare[urlSepare.length - 1] = numPage;
+                urlPage = urlSepare.join('/');
+            }
+        } 
+        else {
+            console.log("Le chapitre a deja ete telechargé");
+            numPage = fs.readdirSync(dirName).length;
+        }
+        updateMangaLibrary(mangaName, numScan, numPage);
     },
 
     recupUrlsPages: async function (mangaName, numScan) {
@@ -103,6 +144,15 @@ async function download(uri, filename, callback) {
         request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
     });
 };
+
+function sendNewPageUrlToClient(mangaName,numScan,numPage,socket){
+    let addrPage = "temp/" + mangaName + "/" + numScan + "/" + numPage + ".png";
+    socket.emit('getChapitre',JSON.stringify({
+        urPage: addrPage,
+        status : "OK",
+        typeData : "pageUnique"
+    }))
+}
 
 async function recupUrlImage(urlPage, numPage, dossier) {
     try {

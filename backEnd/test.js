@@ -1,6 +1,7 @@
 const downloadTools = require('./downloadTools.js');
 const outingsWatcher = require('./outingsWatcher.js');
 const userManager = require('./userManager.js')
+const libraryManager = require('./libraryManager.js')
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
@@ -13,8 +14,4 @@ const request = require('request');
 
 // downloadTools.telechargerUnScan("shingeki-no-kyojin", 121);
 
-let abc = [1,2,3];
-let b;
-if((b = abc.find((elem) => elem == 1)) == 1){
-    console.log("true")
-}
+console.log()
