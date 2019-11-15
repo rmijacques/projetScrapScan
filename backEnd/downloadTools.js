@@ -57,9 +57,9 @@ module.exports = {
     },
 
     //Telecharge toutes les Pages d'un scan à partir d'un nom et d'un numéro de scan
-    telechargerUnScanPageParPage: async function (mangaName, numScan,socket) {
+    telechargerUnScan: async function (mangaName, numScan,socket) {
         let numPage = 1;
-        let name = formatMangaName(mangaName);
+        let name = tools.formatMangaName(mangaName);
         let urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
         let urlCover = COVER_URL + name + '/cover/cover_250x350.jpg';
         let dirName = "temp/" + mangaName;

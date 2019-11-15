@@ -67,7 +67,6 @@ export class MangaCardComponent implements OnInit {
       numChapter: chap.num
     };
     this.socket.emit("getChapitre", JSON.stringify(message));
-
   }
 
 }

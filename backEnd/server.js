@@ -66,17 +66,24 @@ if (!fs.existsSync(LIBRARY_URL)) {
 
 //Sockets
 io.on('connection', function(socket){
+
     socket.emit('connection',"Connecté au serveur")
     console.log('Client connecte');
+
     socket.on('checkUser',async function(message){
+        console.log("////// GOT MESSAGE : checkUser //////");
+        console.log(message);
+
         message = JSON.parse(message);
-        console.log(message.userName);
         let ret = await userManager.isInDataBase(message.userName);  
         socket.emit('checkUser', JSON.stringify({userName: ret}));
     });
 
     //Recup la liste des urls d'un chapitre et la renvoie
     socket.on('lecteur',async function(message){
+        console.log("////// GOT MESSAGE : lecteur //////");
+        console.log(message);
+
         message = JSON.parse(message);
         let mangaName = message.name;
         let numChapter = message.num;
@@ -86,6 +93,9 @@ io.on('connection', function(socket){
 
     //Recup les dernieres sortie
     socket.on('recupDernieresSorties',async function(message){
+        console.log("////// GOT MESSAGE : recupDernieresSorties //////");
+        console.log(message);
+
         message = JSON.parse(message)
         let jsonBiblio = await libraryManager.getLibraryByUser(message.userName);
         socket.emit('recupDernieresSorties',JSON.stringify(jsonBiblio));
@@ -93,10 +103,13 @@ io.on('connection', function(socket){
 
     //Recherche un nouveau scan (on le telecharge si il n'est pas present et qu'il existe) et renvoi l'url de ses pages
     //In: chapitre = {mangaName,numChapter}
-    socket.on('getChapitre', async function(chapitre){
-        chapitre = JSON.parse(chapitre);
-        let name = tools.formatMangaName(chapitre.mangaName);
-        let numChapter = chapitre.numChapter;
+    socket.on('getChapitre', async function(message){
+        console.log("////// GOT MESSAGE : getChapitre //////");
+        console.log(message);
+
+        chapitre = JSON.parse(message);
+        let name = tools.formatMangaName(message.mangaName);
+        let numChapter = message.numChapter;
         let urlList = await libraryManager.getLibraryByScan(name, numChapter);
         if (urlList){
             socket.emit('getChapitre', JSON.stringify({
@@ -119,9 +132,13 @@ io.on('connection', function(socket){
         }
     });
 
-    socket.on('getChapitrePageParPage',async function(chapitre){
-        let name = tools.formatMangaName(chapitre.mangaName);
-        let numChapter = chapitre.num;
+    socket.on('getChapitrePageParPage',async function(message){
+        console.log("////// GOT MESSAGE : getChapitrePageParPage //////");
+        console.log(message);
+
+        message = JSON.parse(message);
+        let name = tools.formatMangaName(message.mangaName);
+        let numChapter = message.num;
         let urlList = await libraryManager.getLibraryByScan(name, numChapter);
         if (urlList){
             socket.emit('getChapitre',JSON.stringify({
@@ -145,17 +162,21 @@ io.on('connection', function(socket){
             }
         }
     });
-    socket.on('suivreUnManga', async function(infos){
-        infos = JSON.parse(infos)
-        let userName = infos.userName;
-        let mangaName = infos.mangaName;
-        let numChapter = infos.numChapter;
+
+    socket.on('suivreUnManga', async function(message){
+        console.log("////// GOT MESSAGE : suivreUnManga //////");
+        console.log(message);
+
+        message = JSON.parse(message)
+        let userName = message.userName;
+        let mangaName = message.mangaName;
+        let numChapter = message.numChapter;
         if(userManager.chapitreInUserData(userName,mangaName,numChapter)){
             socket.emit('suivreUnManga', JSON.stringify({ status: 'deja pres'}));
             return;
         }
         if (await downloadTools.verifierExistenceChapitre(mangaName, numChapter)){
-            userManager.updateList(req.params.userName,mangaName,numChapter);
+            userManager.updateList(userName,mangaName,numChapter);
             socket.emit('suivreUnManga', JSON.stringify({ status: 'OK'}));
             return;
         }

@@ -63,7 +63,7 @@ export class PageLecteurComponent implements OnInit {
     this.bindSocket();
   }
 
-  getListeUrls(manga,chapitre){
+  getListeUrls(manga, chapitre){
     this.rechercheTerminee = false;
     let chap = {
       mangaName: manga,
