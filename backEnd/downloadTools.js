@@ -24,7 +24,7 @@ module.exports = {
         if(libraryManager.mangaInLibrary(mangaName)){
             fs.mkdir(dirName, (err)=>{});
         }
-        
+        console.log("");
         //Ajout de la cover si inexistante
         if (!fs.existsSync(dirName + "/cover.jpg")) {
             download(urlCover, dirName + "/cover.jpg", (err) => {});
