@@ -107,27 +107,29 @@ io.on('connection', function(socket){
         console.log("////// GOT MESSAGE : getChapitre //////");
         console.log(message);
 
-        chapitre = JSON.parse(message);
+        message = JSON.parse(message);
         let name = tools.formatMangaName(message.mangaName);
         let numChapter = message.numChapter;
         let urlList = await libraryManager.getLibraryByScan(name, numChapter);
         if (urlList){
             socket.emit('getChapitre', JSON.stringify({
-                urList: urlList,
+                urlList: urlList,
+                numChapter: numChapter,
                 status : "OK"
-            }))
+            }));
         } else {
             if (await downloadTools.verifierExistenceChapitre(name, numChapter)) {
                 await downloadTools.telechargerUnScan(name, numChapter);
                 urlList = await libraryManager.getLibraryByScan(name, numChapter);
                 socket.emit('getChapitre', JSON.stringify({
-                    urList: urlList,
+                    urlList: urlList,
+                    numChapter: numChapter,
                     status : "OK"
-                }))
+                }));
             } else {
                 socket.emit('getChapitre',JSON.stringify({
                     status : "NOPE"
-                }))
+                }));
             }
         }
     });
@@ -138,23 +140,24 @@ io.on('connection', function(socket){
 
         message = JSON.parse(message);
         let name = tools.formatMangaName(message.mangaName);
-        let numChapter = message.num;
+        let numChapter = message.numChapter;
         let urlList = await libraryManager.getLibraryByScan(name, numChapter);
         if (urlList){
-            socket.emit('getChapitre',JSON.stringify({
-                urList: urlList,
+            socket.emit('getChapitrePageParPage',JSON.stringify({
+                urlList: urlList,
                 status : "OK",
                 typeData : "listePages"
             }))
         } else {
             if (await downloadTools.verifierExistenceChapitre(name, numChapter)) {
+                socket.emit('debutDL');
                 await downloadTools.telechargerUnScanPageParPage(name, numChapter,socket);
                 urlList = await libraryManager.getLibraryByScan(name, numChapter);
-                socket.emit('getChapitre',JSON.stringify({
-                    urList: urlList,
-                    status : "OK",
-                    typeData : "listePages"
-                }))
+                // socket.emit('getChapitre',JSON.stringify({
+                //     urlList: urlList,
+                //     status : "OK",
+                //     typeData : "listePages"
+                // }))
             } else {
                 socket.emit('getChapitre',JSON.stringify({
                     status : "NOPE"

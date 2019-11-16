@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
   bindSocket() {
     this.socket.on("checkUser", (message)=> {
       message = JSON.parse(message);
-      if (message != "not identified" ){
+      if (message.userName != "not identified" ){
         //Load this special account
         console.log("Welcome " + message.userName);
         sessionStorage.setItem("user", message.userName);

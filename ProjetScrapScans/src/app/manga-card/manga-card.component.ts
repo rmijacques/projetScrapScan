@@ -16,7 +16,6 @@ export class MangaCardComponent implements OnInit {
   @Input() chapitres : any[];
   chapitresTelecharges : any[];
   chapitresNonTelecharges: any[];
-  chap : any;
   constructor(private socket : Socket) { }
 
   bindSocket() {
@@ -25,11 +24,10 @@ export class MangaCardComponent implements OnInit {
       // console.log(reponse);
       if(reponse.status === "OK"){
         console.log("Chapitre Telecharge");
-        this.chapitresTelecharges.push(this.chap.num);
-        this.chapitresNonTelecharges.splice(this.chapitresNonTelecharges.indexOf(this.chap), 1 );
+        this.chapitresTelecharges.push(reponse.numChapter);
+        this.chapitresNonTelecharges.splice(this.chapitresNonTelecharges.indexOf(reponse.numChapter), 1 );
       }
       else{
-        this.chap.dlEnCours = false;
         console.log("Chapitre inexistant");
       }
     });
@@ -60,8 +58,6 @@ export class MangaCardComponent implements OnInit {
   }
 
   telechargerLeChapitre(chap){
-    chap.dlEnCours = true;
-    this.chap = chap
     let message = {
       mangaName: this.mangaName,
       numChapter: chap.num

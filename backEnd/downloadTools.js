@@ -31,7 +31,7 @@ module.exports = {
         }
         dirName += "/" + numScan + "/";
         
-        if(libraryManager.chapitreInLibrary(mangaName,numScan)){
+        if(!libraryManager.chapitreInLibrary(mangaName,numScan)){
             fs.mkdirSync(dirName);
         }
         else {
@@ -140,18 +140,19 @@ module.exports = {
 
 //Telecharge le fichier present à l'adresse uri et le telecharge dans filename
 async function download(uri, filename, callback) {
-    request.head(uri, function (err, res, body) {
+    await request.head(uri, function (err, res, body) {
         request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
     });
 };
 
 function sendNewPageUrlToClient(mangaName,numScan,numPage,socket){
     let addrPage = "temp/" + mangaName + "/" + numScan + "/" + numPage + ".png";
-    socket.emit('getChapitre',JSON.stringify({
-        urPage: addrPage,
+    socket.emit('getChapitrePageParPage',JSON.stringify({
+        urlPage: addrPage,
+        numPage: numPage,
         status : "OK",
         typeData : "pageUnique"
-    }))
+    }));
 }
 
 async function recupUrlImage(urlPage, numPage, dossier) {
