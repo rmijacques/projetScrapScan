@@ -3,13 +3,12 @@ Backend :
 - userData.json : sauvegarder lastCapter et currentChapter dans deux var bien définies
 - télécharger automatiquement currentChapter aprés modif
 - Regarder hebergements
-- afficher la première page du manga dés quelle est téléchargée 
 - regarder le packagé apidocjs pour la generation de la documentation
 - dans userData: stocker le nom du manga formatté ET non-formatté pour avoir un joli titre sur nouvelles sorties
+- fonction du synchronise la libraire avec bibliotheque.json
 
 
 Frontend :
 - nouvellesSortie  : - afficher tous les chapitre possibles d'un manga meme pas telecharges
 - suivreUnManga : arreter d'afficher l'icone de chargement aprés l'ajout
 - ne pas dire ajout de scan quand le scan existe dejà dans le userData.json
-- afficher la première page du manga dés quelle est téléchargée 
