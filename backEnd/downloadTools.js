@@ -12,7 +12,7 @@ const LIBRARY_URL = "temp/bibliotheque.json";
 
 module.exports = {
     //Telecharge toutes les Pages d'un scan à partir d'un nom et d'un numéro de scan et renvoie chaque page au client quand elle est telecharge
-    telechargerUnScanPageParPage: async function (mangaName, numScan,socket) {
+    telechargerUnScanPageParPage: async function (mangaName, numScan, socket) {
         let numPage = 1;
         let name = tools.formatMangaName(mangaName);
         let urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
@@ -21,8 +21,8 @@ module.exports = {
         let chapitreDejaTelecharge = false;
 
         //Creation dossier du manga si inexistant
-        if(libraryManager.mangaInLibrary(mangaName)){
-            fs.mkdir(dirName, (err)=>{});
+        if (libraryManager.mangaInLibrary(mangaName)) {
+            fs.mkdir(dirName, (err) => {});
         }
         console.log("");
         //Ajout de la cover si inexistante
@@ -30,11 +30,10 @@ module.exports = {
             download(urlCover, dirName + "/cover.jpg", (err) => {});
         }
         dirName += "/" + numScan + "/";
-        
-        if(!libraryManager.chapitreInLibrary(mangaName,numScan)){
+
+        if (!libraryManager.chapitreInLibrary(mangaName, numScan)) {
             fs.mkdirSync(dirName);
-        }
-        else {
+        } else {
             chapitreDejaTelecharge = true;
         }
 
@@ -42,22 +41,22 @@ module.exports = {
             console.log("Lancement du telechargement de " + mangaName + " Scan N°" + numScan);
             while (await telechargerUnePage(urlPage, numPage, dirName) == true) {
                 console.log(urlPage);
-                sendNewPageUrlToClient(mangaName,numScan,numPage,socket);
+                sendNewPageUrlToClient(mangaName, numScan, numPage, socket);
                 numPage++;
                 urlSepare = urlPage.split('/');
                 urlSepare[urlSepare.length - 1] = numPage;
                 urlPage = urlSepare.join('/');
             }
-        } 
-        else {
+        } else {
             console.log("Le chapitre a deja ete telechargé");
             numPage = fs.readdirSync(dirName).length;
         }
-        updateMangaLibrary(mangaName, numScan, numPage);
+        console.log("Le chapitre a bien été téléchargé");
+        libraryManager.updateMangaLibrary(mangaName, numScan, numPage);
     },
 
     //Telecharge toutes les Pages d'un scan à partir d'un nom et d'un numéro de scan
-    telechargerUnScan: async function (mangaName, numScan,socket) {
+    telechargerUnScan: async function (mangaName, numScan, socket) {
         let numPage = 1;
         let name = tools.formatMangaName(mangaName);
         let urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
@@ -66,20 +65,19 @@ module.exports = {
         let chapitreDejaTelecharge = false;
 
         //Creation dossier du manga si inexistant
-        if(libraryManager.mangaInLibrary(mangaName)){
-            fs.mkdir(dirName, (err)=>{});
+        if (libraryManager.mangaInLibrary(mangaName)) {
+            fs.mkdir(dirName, (err) => {});
         }
-        
+
         //Ajout de la cover si inexistante
         if (!fs.existsSync(dirName + "/cover.jpg")) {
             download(urlCover, dirName + "/cover.jpg", (err) => {});
         }
         dirName += "/" + numScan + "/";
-        
-        if(libraryManager.chapitreInLibrary(mangaName,numScan)){
+
+        if (libraryManager.chapitreInLibrary(mangaName, numScan)) {
             fs.mkdirSync(dirName);
-        }
-        else {
+        } else {
             chapitreDejaTelecharge = true;
         }
 
@@ -87,18 +85,17 @@ module.exports = {
             console.log("Lancement du telechargement de " + mangaName + " Scan N°" + numScan);
             while (await telechargerUnePage(urlPage, numPage, dirName) == true) {
                 console.log(urlPage);
-                sendNewPageUrlToClient(mangaName,numScan,numPage,socket);
+                sendNewPageUrlToClient(mangaName, numScan, numPage, socket);
                 numPage++;
                 urlSepare = urlPage.split('/');
                 urlSepare[urlSepare.length - 1] = numPage;
                 urlPage = urlSepare.join('/');
             }
-        } 
-        else {
+        } else {
             console.log("Le chapitre a deja ete telechargé");
             numPage = fs.readdirSync(dirName).length;
         }
-        updateMangaLibrary(mangaName, numScan, numPage);
+        libraryManager.updateMangaLibrary(mangaName, numScan, numPage);
     },
 
     recupUrlsPages: async function (mangaName, numScan) {
@@ -120,7 +117,7 @@ module.exports = {
         }
     },
 
-    verifierExistenceChapitre: async function(mangaName, chapitre) {
+    verifierExistenceChapitre: async function (mangaName, chapitre) {
         name = tools.formatMangaName(mangaName);
         mangaStr = SITE_URL + name + '/' + chapitre + '/' + 1;
         mangaStr = mangaStr.replace(/\s/g, '');
@@ -134,6 +131,17 @@ module.exports = {
             nouvScans = false;
         })
         return nouvScans
+    },
+    telechargerCover: function (mangaName) {
+        mangaName = tools.formatMangaName(mangaName);
+        let dirName = "temp/" + mangaName;
+        let urlCover = COVER_URL + name + '/cover/cover_250x350.jpg';
+
+        fs.mkdir(dirName, (err) => {});
+        //Ajout de la cover si inexistante
+        if (!fs.existsSync(dirName + "/cover.jpg")) {
+            download(urlCover, dirName + "/cover.jpg", (err) => {});
+        }
     }
 };
 
@@ -145,13 +153,13 @@ async function download(uri, filename, callback) {
     });
 };
 
-function sendNewPageUrlToClient(mangaName,numScan,numPage,socket){
+function sendNewPageUrlToClient(mangaName, numScan, numPage, socket) {
     let addrPage = "temp/" + mangaName + "/" + numScan + "/" + numPage + ".png";
-    socket.emit('getChapitrePageParPage',JSON.stringify({
+    socket.emit('getChapitrePageParPage', JSON.stringify({
         urlPage: addrPage,
         numPage: numPage,
-        status : "OK",
-        typeData : "pageUnique"
+        status: "OK",
+        typeData: "pageUnique"
     }));
 }
 
@@ -198,69 +206,4 @@ async function telechargerUnePage(urlPage, numPage, dossier) {
     } catch (error) {
         return false;
     }
-}
-
-function updateMangaLibrary(mangaName, chapterNum, nbPages) {
-    let srcPages = [];
-    let parsedChapterNum = parseInt(chapterNum, 10);
-    let addrPage = "temp/" + mangaName + "/" + chapterNum + "/";
-    let aEcrire;
-    let jsonAvantModif = fs.readFileSync(LIBRARY_URL, (err) => {
-        console.log("Erreur lecture JSON: " + err)
-    });
-    let logAvantModif = JSON.parse(jsonAvantModif);
-    let mangaDejaPresent = false;
-    let mangaChoisi;
-
-
-    console.log("Avant modif :");
-    console.log(logAvantModif);
-
-    for (let i = 1; i < nbPages; i++) {
-        srcPages[i - 1] = addrPage + i + ".png";
-    }
-    if (logAvantModif.length > 0) {
-        //Si le manga est dans la biblio de l'user
-        mangaChoisi = logAvantModif.findIndex((manga) => {
-            return manga.name == mangaName;
-        });
-        if (mangaChoisi != -1) {
-            logAvantModif[mangaChoisi].chapters.push({
-                numChapter: parsedChapterNum,
-                listePages: srcPages
-            });
-            logAvantModif[mangaChoisi].chapters.sort((a, b) => {
-                return b.numChapter - a.numChapter;
-            })
-        } else {
-            aEcrire = {
-                name: mangaName,
-                chapters: [{
-                    numChapter: parsedChapterNum,
-                    listePages: srcPages
-                }]
-            }
-            logAvantModif.push(aEcrire);
-        }
-    
-    }
-    //Si la biblio est vide
-    else {
-        aEcrire = {
-            name: mangaName,
-            chapters: [{
-                numChapter: parsedChapterNum,
-                listePages: srcPages
-            }]
-        }
-        logAvantModif.push(aEcrire);
-    }
-
-    console.log("Apres modif :");
-    console.log(logAvantModif);
-
-    fs.writeFileSync(LIBRARY_URL, JSON.stringify(logAvantModif, null, '\t'), (err) => {
-        console.log(err)
-    })
-
 }

@@ -66,17 +66,19 @@ export class PageLecteurComponent implements OnInit {
       switch(reponse.typeData){
         case "pageUnique":
             if(reponse.numPage == 1) {
+              this.rechercheTerminee = true;
               setTimeout(() => {this.imageAEnvoyer ="http://localhost:8080/" + reponse.urlPage;}, 5000);
             }
             this.listeImages[reponse.numPage] ="http://localhost:8080/" + reponse.urlPage;
             this.nbPages = this.nbPages+1;
             break;
         case "listePages":
+          this.rechercheTerminee = true;
             for(let i=0; i < reponse.urlList.length; i++){
               this.listeImages[i] = "http://localhost:8080/" + reponse.urlList[i];
             }
             this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
-            this.nbPages = this.listeImages.length-1;
+            this.nbPages = this.listeImages.length;
             break;
         default:
           break;
@@ -93,7 +95,7 @@ export class PageLecteurComponent implements OnInit {
   }
 
   getListeUrls(manga, chapitre){
-    //this.rechercheTerminee = false;
+    this.rechercheTerminee = false;
     let chap = {
       mangaName: manga,
       numChapter: chapitre

@@ -152,12 +152,6 @@ io.on('connection', function(socket){
             if (await downloadTools.verifierExistenceChapitre(name, numChapter)) {
                 socket.emit('debutDL');
                 await downloadTools.telechargerUnScanPageParPage(name, numChapter,socket);
-                urlList = await libraryManager.getLibraryByScan(name, numChapter);
-                // socket.emit('getChapitre',JSON.stringify({
-                //     urlList: urlList,
-                //     status : "OK",
-                //     typeData : "listePages"
-                // }))
             } else {
                 socket.emit('getChapitre',JSON.stringify({
                     status : "NOPE"
@@ -180,6 +174,8 @@ io.on('connection', function(socket){
         }
         if (await downloadTools.verifierExistenceChapitre(mangaName, numChapter)){
             userManager.updateList(userName,mangaName,numChapter);
+            socket.emit('debutDL');
+            await downloadTools.telechargerUnScanPageParPage(name, numChapter,socket);
             socket.emit('suivreUnManga', JSON.stringify({ status: 'OK'}));
             return;
         }

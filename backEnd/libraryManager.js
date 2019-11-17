@@ -73,5 +73,60 @@ module.exports = {
         else{
             return false;
         }
+    },
+    updateMangaLibrary : function(mangaName, chapterNum, nbPages) {
+        let srcPages = [];
+        let parsedChapterNum = parseInt(chapterNum, 10);
+        let addrPage = "temp/" + mangaName + "/" + chapterNum + "/";
+        let aEcrire;
+        let jsonAvantModif = fs.readFileSync(LIBRARY_URL, (err) => {
+            console.log("Erreur lecture JSON: " + err)
+        });
+        let logAvantModif = JSON.parse(jsonAvantModif);
+        let mangaDejaPresent = false;
+        let mangaChoisi;
+    
+        for (let i = 1; i < nbPages; i++) {
+            srcPages[i - 1] = addrPage + i + ".png";
+        }
+        if (logAvantModif.length > 0) {
+            //Si le manga est dans la biblio de l'user
+            mangaChoisi = logAvantModif.findIndex((manga) => {
+                return manga.name == mangaName;
+            });
+            if (mangaChoisi != -1) {
+                logAvantModif[mangaChoisi].chapters.push({
+                    numChapter: parsedChapterNum,
+                    listePages: srcPages
+                });
+                logAvantModif[mangaChoisi].chapters.sort((a, b) => {
+                    return b.numChapter - a.numChapter;
+                })
+            } else {
+                aEcrire = {
+                    name: mangaName,
+                    chapters: [{
+                        numChapter: parsedChapterNum,
+                        listePages: srcPages
+                    }]
+                }
+                logAvantModif.push(aEcrire);
+            }
+        
+        }
+        //Si la biblio est vide
+        else {
+            aEcrire = {
+                name: mangaName,
+                chapters: [{
+                    numChapter: parsedChapterNum,
+                    listePages: srcPages
+                }]
+            }
+            logAvantModif.push(aEcrire);
+        }
+        fs.writeFileSync(LIBRARY_URL, JSON.stringify(logAvantModif, null, '\t'), (err) => {
+            console.log(err)
+        })
     }
 }
