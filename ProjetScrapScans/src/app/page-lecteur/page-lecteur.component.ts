@@ -88,7 +88,7 @@ export class PageLecteurComponent implements OnInit {
 
   ngOnInit() {
     this._route.params.subscribe(params => {
-      this.getListeUrls(params.mangaName,params.numChap);
+      this.chargerNouveauScan({nomManga :params.mangaName,numChapitre: params.numChap});
     });
 
     this.bindSocket();

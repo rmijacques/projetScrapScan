@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Injectable } from '@angular/core';
 import { from } from 'rxjs';
 
 import { Socket } from 'ngx-socket-io';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-manga-card',
@@ -16,7 +17,9 @@ export class MangaCardComponent implements OnInit {
   @Input() chapitres : any[];
   chapitresTelecharges : any[];
   chapitresNonTelecharges: any[];
-  constructor(private socket : Socket) { }
+  
+  constructor(private socket : Socket,
+              private router : Router) { }
 
   bindSocket() {
     this.socket.on("getChapitre", (reponse)=> {

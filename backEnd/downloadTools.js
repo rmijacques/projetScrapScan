@@ -12,7 +12,7 @@ const LIBRARY_URL = "temp/bibliotheque.json";
 
 module.exports = {
     //Telecharge toutes les Pages d'un scan à partir d'un nom et d'un numéro de scan et renvoie chaque page au client quand elle est telecharge
-    telechargerUnScanPageParPage: async function (mangaName, numScan, socket) {
+    telechargerUnScanPageParPage: async function(mangaName, numScan, socket) {
         let numPage = 1;
         let name = tools.formatMangaName(mangaName);
         let urlPage = SITE_URL + name + '/' + numScan + '/' + numPage;
@@ -21,10 +21,10 @@ module.exports = {
         let chapitreDejaTelecharge = false;
 
         //Creation dossier du manga si inexistant
-        if (libraryManager.mangaInLibrary(mangaName)) {
-            fs.mkdir(dirName, (err) => {});
+        if (!libraryManager.mangaInLibrary(mangaName)) {
+            fs.mkdirSync(dirName);
         }
-        console.log("");
+
         //Ajout de la cover si inexistante
         if (!fs.existsSync(dirName + "/cover.jpg")) {
             download(urlCover, dirName + "/cover.jpg", (err) => {});

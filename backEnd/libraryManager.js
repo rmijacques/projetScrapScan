@@ -65,7 +65,7 @@ module.exports = {
     chapitreInLibrary: function(mangaName,numChapter){
         let library = JSON.parse(fs.readFileSync(LIBRARY_URL));
         mangaName = tools.formatMangaName(mangaName);
-        let trouverManga = library.find((elem)=>elem.name);
+        let trouverManga = library.find((elem)=>mangaName == elem.name);
     
         if(trouverManga){
             return trouverManga.chapters.find(({numChapter:c1}) => c1 === numChapter) != undefined;
