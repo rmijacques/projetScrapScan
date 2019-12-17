@@ -27,7 +27,7 @@ module.exports = {
             console.log("User inexistant")
             return false;
         }
-        console.log(userToCheck.mangaList[0].name + " " + userToCheck.mangaList[0].lastChapter)
+        //console.log(userToCheck.mangaList[0].name + " " + userToCheck.mangaList[0].lastChapter)
         console.log(mangaName + " " + chapterNum)
         result = userToCheck.mangaList.find(chapitre => chapitre.name === mangaName && chapitre.lastChapter === parseInt(chapterNum));
         if (result == undefined) {

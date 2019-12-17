@@ -4,11 +4,15 @@ import { from } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
 import { Router } from '@angular/router';
 
+let localhostURL = "http://localhost:8080/";
+let serverURL = "http://172.30.250.55:8080/";
+
 @Component({
   selector: 'app-manga-card',
   templateUrl: './manga-card.component.html',
   styleUrls: ['./manga-card.component.scss']
 })
+
 
 @Injectable()
 export class MangaCardComponent implements OnInit {
@@ -17,7 +21,7 @@ export class MangaCardComponent implements OnInit {
   @Input() chapitres : any[];
   chapitresTelecharges : any[];
   chapitresNonTelecharges: any[];
-  
+
   constructor(private socket : Socket,
               private router : Router) { }
 
@@ -37,7 +41,8 @@ export class MangaCardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.mangaCover = "http://localhost:8080/temp/"+this.mangaName+"/cover.jpg"
+    this.mangaCover = localhostURL + "temp/"+this.mangaName+"/cover.jpg"
+    // this.mangaCover = serverURL + "temp/" + this.mangaName + "/cover.jpg"
     this.chapitresTelecharges = this.chapitres;
 
     //A modifier pour recevoir directement liste chapter comme ca

@@ -10,6 +10,9 @@ export enum KEY_CODE {
   LEFT_ARROW = 37
 }
 
+let localhostURL = "http://localhost:8080/"
+let serverURL = "http://172.30.250.55:8080/"
+
 @Component({
   selector: 'app-page-lecteur',
   templateUrl: './page-lecteur.component.html',
@@ -46,7 +49,8 @@ export class PageLecteurComponent implements OnInit {
       }
       else{
         for(let i=0; i < reponse.urlList.length; i++){
-          this.listeImages[i] = "http://localhost:8080/" + reponse.urlList[i];
+          this.listeImages[i] = localhostURL + reponse.urlList[i];
+          //this.listeImages[i] = serverURL + reponse.urlList[i];
         }
         this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
         this.nbPages = this.listeImages.length-1;
@@ -67,15 +71,18 @@ export class PageLecteurComponent implements OnInit {
         case "pageUnique":
             if(reponse.numPage == 1) {
               this.rechercheTerminee = true;
-              setTimeout(() => {this.imageAEnvoyer ="http://localhost:8080/" + reponse.urlPage;}, 5000);
+              setTimeout(() => {this.imageAEnvoyer = localhostURL + reponse.urlPage;}, 5000);
+              // setTimeout(() => {this.imageAEnvoyer = serverURL + reponse.urlPage;}, 5000);
             }
-            this.listeImages[reponse.numPage] ="http://localhost:8080/" + reponse.urlPage;
+            this.listeImages[reponse.numPage] = localhostURL + reponse.urlPage;
+            // this.listeImages[reponse.numPage] = serverURL + reponse.urlPage;
             this.nbPages = this.nbPages+1;
             break;
         case "listePages":
           this.rechercheTerminee = true;
             for(let i=0; i < reponse.urlList.length; i++){
-              this.listeImages[i] = "http://localhost:8080/" + reponse.urlList[i];
+              this.listeImages[i] = localhostURL + reponse.urlList[i];
+              // this.listeImages[i] = serverURL + reponse.urlList[i];
             }
             this.imageAEnvoyer = this.listeImages[0].replace(/^\s+|\s+$/g, '');
             this.nbPages = this.listeImages.length;

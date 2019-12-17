@@ -13,8 +13,12 @@ import { LoginComponent } from './login/login.component';
 import { MangaCardComponent } from './manga-card/manga-card.component';
 import { SuivreUnMangaComponent } from './suivre-un-manga/suivre-un-manga.component';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
- 
-const config: SocketIoConfig = { url: 'http://localhost:8080', options: {} };
+
+let localhostURL = "http://localhost:8080"
+let serverURL = "http://172.30.250.55:8080/"
+
+const config: SocketIoConfig = { url: localhostURL, options: {} };
+//const config: SocketIoConfig = { url: serverURL, options: {} };
 
 @NgModule({
   declarations: [

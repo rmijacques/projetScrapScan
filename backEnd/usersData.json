@@ -1,7 +1,12 @@
 [
     {
         "name": "Baptiste",
-        "mangaList": []
+        "mangaList": [
+            {
+                "name": "one-piece",
+                "lastChapter": 920
+            }
+        ]
     },
     {
         "name": "Remi",
