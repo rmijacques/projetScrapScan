@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, Injectable } from '@angular/core';
 import { from } from 'rxjs';
 
-import { Socket } from 'ngx-socket-io';
 import { Router } from '@angular/router';
+import { SocketService } from '../socket.service';
 
 let localhostURL = "http://localhost:8080/";
 let serverURL = "http://172.30.250.55:8080/";
@@ -22,23 +22,9 @@ export class MangaCardComponent implements OnInit {
   chapitresTelecharges : any[];
   chapitresNonTelecharges: any[];
 
-  constructor(private socket : Socket,
+  constructor(private _SocketService : SocketService,
               private router : Router) { }
 
-  bindSocket() {
-    this.socket.on("getChapitre", (reponse)=> {
-      reponse = JSON.parse(reponse);
-      // console.log(reponse);
-      if(reponse.status === "OK"){
-        console.log("Chapitre Telecharge");
-        this.chapitresTelecharges.push(reponse.numChapter);
-        this.chapitresNonTelecharges.splice(this.chapitresNonTelecharges.indexOf(reponse.numChapter), 1 );
-      }
-      else{
-        console.log("Chapitre inexistant");
-      }
-    });
-  }
 
   ngOnInit() {
     this.mangaCover = localhostURL + "temp/"+this.mangaName+"/cover.jpg"
@@ -52,7 +38,7 @@ export class MangaCardComponent implements OnInit {
     console.log(this.chapitresTelecharges)
     let dernierChapPossede = this.chapitresTelecharges.reduce(function(a,b){
       return Math.min(a,b);
-    })
+    });
     console.log(dernierChapPossede)
     this.chapitresNonTelecharges = [];
     for(let i=1;i<dernierChapPossede;i++){
@@ -60,9 +46,20 @@ export class MangaCardComponent implements OnInit {
     }
     this.chapitresNonTelecharges.sort(function(a,b){
       return b.num - a.num;
-    })
+    });
 
-    this.bindSocket();
+    this._SocketService.getObservable("getChapitre").subscribe((message)=> {
+      message = JSON.parse(message);
+      // console.log(reponse);
+      if(message.status === "OK"){
+        console.log("Chapitre Telecharge");
+        this.chapitresTelecharges.push(message.numChapter);
+        this.chapitresNonTelecharges.splice(this.chapitresNonTelecharges.indexOf(message.numChapter), 1 );
+      }
+      else{
+        console.log("Chapitre inexistant");
+      }
+    })
   }
 
   telechargerLeChapitre(chap){
@@ -70,7 +67,7 @@ export class MangaCardComponent implements OnInit {
       mangaName: this.mangaName,
       numChapter: chap.num
     };
-    this.socket.emit("getChapitre", JSON.stringify(message));
+    this._SocketService.emit("getChapitre", JSON.stringify(message));
   }
 
 }
