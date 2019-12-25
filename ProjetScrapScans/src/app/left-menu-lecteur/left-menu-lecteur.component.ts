@@ -1,7 +1,6 @@
 import { Component, OnInit ,Output , Input, Injectable} from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter } from '@angular/core';
-import {NgForm} from '@angular/forms';
+import { NgForm } from '@angular/forms';
 import { Router } from "@angular/router";
 
 @Component({

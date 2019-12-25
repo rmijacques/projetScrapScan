@@ -175,6 +175,7 @@ io.on('connection', function(socket){
         if (await downloadTools.verifierExistenceChapitre(mangaName, numChapter)){
             userManager.updateList(userName,mangaName,numChapter);
             socket.emit('debutDL');
+            await downloadTools.telechargerCover(mangaName);
             await downloadTools.telechargerUnScanPageParPage(name, numChapter,socket);
             socket.emit('suivreUnManga', JSON.stringify({ status: 'OK'}));
             return;

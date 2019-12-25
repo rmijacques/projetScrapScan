@@ -2,7 +2,8 @@ import { Component, OnInit ,Output , Input, Injectable, INJECTOR} from '@angular
 import { EventEmitter } from '@angular/core';
 import {NgForm, FormControl} from '@angular/forms';
 import { Router } from "@angular/router";
-import { Socket } from 'ngx-socket-io';
+import { SocketService } from '../socket.service';
+
 
 @Component({
   selector: 'app-login',
@@ -13,11 +14,16 @@ import { Socket } from 'ngx-socket-io';
 @Injectable()
 export class LoginComponent implements OnInit {
 
-  constructor(private socket: Socket,
+  constructor(private _SocketService: SocketService,
               private router: Router) {}
-  
-  bindSocket() {
-    this.socket.on("checkUser", (message)=> {
+
+  ngOnInit() {
+
+    if(sessionStorage.getItem('user') != null){
+      this.router.navigate(['/dernieresSorties']);
+    }
+
+    this._SocketService.getObservable("checkUser").subscribe((message)=> {
       message = JSON.parse(message);
       if (message.userName != "not identified" ){
         //Load this special account
@@ -32,17 +38,9 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    if(sessionStorage.getItem('user') != null){
-      this.router.navigate(['/dernieresSorties']);
-    }
-
-    this.bindSocket();
-  }
-
   checkLoginBackend(userName){
     let message = {userName: userName};
-    this.socket.emit("checkUser", JSON.stringify(message));
+    this._SocketService.emit("checkUser", JSON.stringify(message));
   }
 
   onSubmit(form : NgForm){

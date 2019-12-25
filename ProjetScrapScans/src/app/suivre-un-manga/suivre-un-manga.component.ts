@@ -1,7 +1,7 @@
 import { Component, OnInit, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
-import { Socket } from 'ngx-socket-io';
+import { SocketService } from '../socket.service';
 
 @Component({
   selector: 'app-suivre-un-manga',
@@ -13,20 +13,18 @@ import { Socket } from 'ngx-socket-io';
 export class SuivreUnMangaComponent implements OnInit {
   ajoutEnCours = false;
   constructor(private router: Router,
-              private socket: Socket) { }
+              private _SocketService: SocketService) { }
 
-  bindSocket() {
-    this.socket.on("suivreUnManga", (reponse) => {
-      reponse = JSON.parse(reponse);
+
+  ngOnInit() { 
+
+    this._SocketService.getObservable("getChapitre").subscribe((message) => {
+      message = JSON.parse(message);
       this.ajoutEnCours = false; 
-      if(reponse.status == 'OK') {
+      if(message.status == 'OK') {
         alert("Manga ajouté");
       }
     });
-  }
-
-  ngOnInit() {
-    this.bindSocket();
   }
   
 
@@ -43,7 +41,7 @@ export class SuivreUnMangaComponent implements OnInit {
     };
 
     this.ajoutEnCours = true;
-    this.socket.emit("suivreUnManga", JSON.stringify(message));
+    this._SocketService.emit("suivreUnManga", JSON.stringify(message));
   }
 
 }

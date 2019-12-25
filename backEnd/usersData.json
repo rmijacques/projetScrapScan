@@ -4,11 +4,7 @@
         "mangaList": [
             {
                 "name": "one-piece",
-                "lastChapter": 962
-            },
-            {
-                "name": "shingeki-no-kyojin",
-                "lastChapter": 121
+                "lastChapter": 920
             }
         ]
     },
@@ -16,12 +12,16 @@
         "name": "Remi",
         "mangaList": [
             {
-                "name": "one-piece",
-                "lastChapter": 961
+                "name": "solo-leveling",
+                "lastChapter": 1
             },
             {
                 "name": "one-punch-man",
                 "lastChapter": 1
+            },
+            {
+                "name": "one-piece",
+                "lastChapter": 962
             }
         ]
     }
