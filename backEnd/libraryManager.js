@@ -5,11 +5,11 @@ const rimraf = require('rimraf');
 
 const USER_DATA_URL = "usersData.json";
 const LIBRARY_URL = "temp/bibliotheque.json";
-const TEMP_URL= "temp/"
+const TEMP_URL= "temp/";
 
 module.exports = {
     getLibraryByUser: async function (userName) {
-        let result = []
+        let result = [];
         let usersData = JSON.parse(fs.readFileSync(USER_DATA_URL));
         let library = JSON.parse(fs.readFileSync(LIBRARY_URL));
         
@@ -49,7 +49,7 @@ module.exports = {
         } else {
             let scan = manga.chapters.find((elem) => {
                 return elem.numChapter == parseNumChapter;
-            })
+            });
             if (scan == undefined){
                 return undefined;
             } else {
@@ -83,10 +83,9 @@ module.exports = {
         let addrPage = "temp/" + mangaName + "/" + chapterNum + "/";
         let aEcrire;
         let jsonAvantModif = fs.readFileSync(LIBRARY_URL, (err) => {
-            console.log("Erreur lecture JSON: " + err)
+            console.log("Erreur lecture JSON: " + err);
         });
         let logAvantModif = JSON.parse(jsonAvantModif);
-        let mangaDejaPresent = false;
         let mangaChoisi;
     
         for (let i = 1; i < nbPages; i++) {
@@ -104,7 +103,7 @@ module.exports = {
                 });
                 logAvantModif[mangaChoisi].chapters.sort((a, b) => {
                     return b.numChapter - a.numChapter;
-                })
+                });
             } else {
                 aEcrire = {
                     name: mangaName,
@@ -112,7 +111,7 @@ module.exports = {
                         numChapter: parsedChapterNum,
                         listePages: srcPages
                     }]
-                }
+                };
                 logAvantModif.push(aEcrire);
             }
         
@@ -125,12 +124,12 @@ module.exports = {
                     numChapter: parsedChapterNum,
                     listePages: srcPages
                 }]
-            }
+            };
             logAvantModif.push(aEcrire);
         }
         fs.writeFileSync(LIBRARY_URL, JSON.stringify(logAvantModif, null, '\t'), (err) => {
-            console.log(err)
-        })
+            console.log(err);
+        });
     },
 
     synchronizeLibrary: function() {
@@ -144,13 +143,12 @@ module.exports = {
                 elem.chapters.forEach((index, elem, object) => {
                     let numChapter = elem.numChapter;
                     let chapURL = mangaURL + "\\" + numChapter;
+                    let chapValid = true;
+
                     if (fs.existsSync(chapURL)) {
-                        let chapValid = true;
                         elem.listePages.forEach((elem) => {
-                            if (fs.existsSync(elem)) {
-                                
-                            } else {
-                                chapValid = false
+                            if (!fs.existsSync(elem)) {
+                                chapValid = false;
                             }
                         });
                     } else {
@@ -197,4 +195,4 @@ module.exports = {
             }
         });
     }
-}
+};

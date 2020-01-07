@@ -1,15 +1,11 @@
+/*jshint esversion: 8*/
 const downloadTools = require('./downloadTools.js');
-const outingsWatcher = require('./outingsWatcher.js');
 const userManager = require('./userManager.js');
-const libraryManager = require('./libraryManager.js')
+const libraryManager = require('./libraryManager.js');
 const tools = require('./tools.js');
-const axios = require('axios');
-const cheerio = require('cheerio');
 const fs = require('fs');
-const request = require('request');
 const express = require('express');
 const cors = require('cors');
-const schedule = require('node-schedule');
 
 
 const LIBRARY_URL = "temp/bibliotheque.json";
@@ -17,35 +13,34 @@ const LIBRARY_URL = "temp/bibliotheque.json";
 
 
 //Set up le server
-var app = express()
+var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-app.use(cors())
+app.use(cors());
 
 console.log("Server sets up");
 
 /*----------------------------------------- GESTION DES REQUETES HTTP -----------------------------------------*/
 //Requete de Base, renvoi une erreur car pas utilisée
-app.get('/', function (req, res) {
-    throw new Error('[custom ]ops ')
-    res.send('Page Acueil');
+app.get('/', function () {
+    throw new Error('[custom ]ops ');
 });
 
 //make temp directory accessible from outside the app
 app.use("/temp", express.static(__dirname + '/temp'));
 
 // Ajouter un error handler (middleware)
-app.use(function (error, request, response, next) {
-    console.log(error.message)
+app.use(function (error, request, response) {
+    console.log(error.message);
     if (error) {
         if (error.message && error.message.match(/^\[custom message\]/gi)) {
-            response.send(error.message.replace(/^\[custom message\]/gi, ""))
+            response.send(error.message.replace(/^\[custom message\]/gi, ""));
         } else {
-            response.sendStatus(500).send("Internal error")
+            response.sendStatus(500).send("Internal error");
         }
     }
-})
+});
 
 /*----------------------------------------- CREATION DES DOSSIERS POUR GESTION DES SCANS ----------------------------------*/
 
@@ -57,17 +52,16 @@ fs.mkdir("temp", function (error) {
 });
 if (!fs.existsSync(LIBRARY_URL)) {
     fs.mkdir('temp', err => {
-        //console.log("err mkdir")
-    })
-    fs.writeFileSync(LIBRARY_URL, '[]', (err) => {});
+        console.log("err mkdir"+err);
+    });
+    fs.writeFileSync(LIBRARY_URL, '[]', (err) => { console.log(err); });
 }
 
 /* ------------------------------------------------- GESTION DES REQUETES SOCKET -----------------------------------------*/
 
 //Sockets
 io.on('connection', function(socket){
-
-    socket.emit('connection',"Connecté au serveur")
+    socket.emit('connection',"Connecté au serveur");
     console.log('Client connecte');
 
     socket.on('checkUser',async function(message){
@@ -87,7 +81,7 @@ io.on('connection', function(socket){
         message = JSON.parse(message);
         let mangaName = message.name;
         let numChapter = message.num;
-        let ret = await downloadTools.recupUrlsPages(mangaName,numScan);
+        let ret = await downloadTools.recupUrlsPages(mangaName,numChapter);
         socket.emit('lecteur', JSON.stringify(ret));
     });
 
@@ -96,7 +90,7 @@ io.on('connection', function(socket){
         console.log("////// GOT MESSAGE : recupDernieresSorties //////");
         console.log(message);
 
-        message = JSON.parse(message)
+        message = JSON.parse(message);
         let jsonBiblio = await libraryManager.getLibraryByUser(message.userName);
         socket.emit('recupDernieresSorties',JSON.stringify(jsonBiblio));
     });
@@ -147,7 +141,7 @@ io.on('connection', function(socket){
                 urlList: urlList,
                 status : "OK",
                 typeData : "listePages"
-            }))
+            }));
         } else {
             if (await downloadTools.verifierExistenceChapitre(name, numChapter)) {
                 socket.emit('debutDL');
@@ -155,7 +149,7 @@ io.on('connection', function(socket){
             } else {
                 socket.emit('getChapitre',JSON.stringify({
                     status : "NOPE"
-                }))
+                }));
             }
         }
     });
@@ -164,7 +158,7 @@ io.on('connection', function(socket){
         console.log("////// GOT MESSAGE : suivreUnManga //////");
         console.log(message);
 
-        message = JSON.parse(message)
+        message = JSON.parse(message);
         let userName = message.userName;
         let mangaName = message.mangaName;
         let numChapter = message.numChapter;
@@ -176,13 +170,13 @@ io.on('connection', function(socket){
             userManager.updateList(userName,mangaName,numChapter);
             socket.emit('debutDL');
             await downloadTools.telechargerCover(mangaName);
-            await downloadTools.telechargerUnScanPageParPage(name, numChapter,socket);
+            await downloadTools.telechargerUnScanPageParPage(mangaName, numChapter,socket);
             socket.emit('suivreUnManga', JSON.stringify({ status: 'OK'}));
             return;
         }
         socket.emit('suivreUnManga',JSON.stringify({ status: 'NOPE'}));
     });
-})
+});
 
 
 

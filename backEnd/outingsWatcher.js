@@ -1,12 +1,11 @@
+/*jshint esversion: 8*/
 const axios = require('axios');
 const downloadTools = require('./downloadTools.js');
-const userManager = require('./userManager.js')
+const userManager = require('./userManager.js');
 const cheerio = require('cheerio');
 const fs = require('fs');
-const request = require('request');
-const tools = require('./tools.js');
 
-const SITE_URL = "https://www.lelscan-vf.com/manga/";
+const SITE_URL = "https://www.lelscan-vf.com/";
 
 module.exports = {
     //Depuis la page d'accueil de lelscan, recupere tous les scans sortis recemment
@@ -14,7 +13,7 @@ module.exports = {
         var test;
         var scansSortis = [];
         try {
-            test = await axios.get('https://www.lelscan-vf.com/')
+            test = await axios.get(SITE_URL)
                 .then((reponse) => {
                     return reponse.data;
                 })
@@ -48,7 +47,7 @@ module.exports = {
     recupDerniersChapitresSortisv2: async function (userName) {
         let mangaStr;
         let nouvScans = false;
-        let name;
+        let manga;
 
         console.log("Searching for new scans...");
 
@@ -60,16 +59,15 @@ module.exports = {
         for(let j=0;j<usersData[userIndex].mangaList.length;j++){
             manga = usersData[userIndex].mangaList[j];
             nouvScans = true;
-
-            await axios.get(mangaStr).then(async response=>{
-                console.log("Nouveau Scan de " + name);
-
-                await downloadTools.telechargerUnScan(name, manga.lastChapter);
+            try{
+                await axios.get(mangaStr);
+                console.log("Nouveau Scan de " + manga.name);
+                await downloadTools.telechargerUnScan(manga.name, manga.lastChapter);
                 userManager.updateList(manga.name, manga.lastChapter + 1, usersData[userIndex].name);
-            }).catch(err=>{
+            }
+            catch(err){
                 console.log("Pas de Nouveau Scan de " + manga.name);// + "\n" + mangaStr);
-                //console.log("err "+err)
-            })
+            }
         }
         
     }
