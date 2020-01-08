@@ -21,13 +21,15 @@ export class MangaCardComponent implements OnInit {
   @Input() chapitres : any[];
   chapitresTelecharges : any[];
   chapitresNonTelecharges: any[];
+  
 
   constructor(private _SocketService : SocketService,
               private router : Router) { }
 
 
   ngOnInit() {
-    this.mangaCover = localhostURL + "temp/"+this.mangaName+"/cover.jpg"
+    this.mangaCover = localhostURL + "temp/" + this.formatMangaName(this.mangaName) +"/cover.jpg"
+    console.log(this.mangaCover)
     // this.mangaCover = serverURL + "temp/" + this.mangaName + "/cover.jpg"
     this.chapitresTelecharges = this.chapitres;
 
@@ -35,11 +37,11 @@ export class MangaCardComponent implements OnInit {
     for(let i=0;i<this.chapitresTelecharges.length;i++){
       this.chapitresTelecharges[i] = this.chapitresTelecharges[i].numChapter;
     }
-    console.log(this.chapitresTelecharges)
+
     let dernierChapPossede = this.chapitresTelecharges.reduce(function(a,b){
       return Math.min(a,b);
     });
-    console.log(dernierChapPossede)
+
     this.chapitresNonTelecharges = [];
     for(let i=1;i<dernierChapPossede;i++){
       this.chapitresNonTelecharges.push({num :i,dlEnCours : false});
@@ -68,6 +70,10 @@ export class MangaCardComponent implements OnInit {
       numChapter: chap.num
     };
     this._SocketService.emit("getChapitre", JSON.stringify(message));
+  }
+
+  formatMangaName(mangaName){
+    return mangaName.replace(/ /gi,'-').replace(/\'/gi,'').replace(/\:/gi,'-').replace(/\./gi,'-').toLowerCase();
   }
 
 }

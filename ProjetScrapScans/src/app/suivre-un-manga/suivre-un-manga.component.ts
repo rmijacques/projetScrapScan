@@ -25,6 +25,14 @@ export class SuivreUnMangaComponent implements OnInit {
         alert("Manga ajouté");
       }
     });
+
+    this._SocketService.getObservable("suivreUnManga").subscribe((message) =>{
+      message = JSON.parse(message);
+      if(message.status == 'OK'){
+        alert("Chapitre téléchargé");
+        this.ajoutEnCours = false;
+      }
+    })
   }
   
 

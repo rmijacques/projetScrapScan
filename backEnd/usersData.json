@@ -1,1 +1,15 @@
-{}
+[
+    {
+        "name": "Remi",
+        "mangaList": [
+            {
+                "name": "one-piece",
+                "lastChapter": 954
+            },
+            {
+                "name": "solo-leveling",
+                "lastChapter": 2
+            }
+        ]
+    }
+]

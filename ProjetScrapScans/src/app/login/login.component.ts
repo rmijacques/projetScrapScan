@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(["/dernieresSorties"]);
       }
       else {
-        //throw new Error('Invalid')
+        throw new Error('Invalid')
         console.log("FUIS");
       }
     });

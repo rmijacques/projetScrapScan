@@ -67,10 +67,10 @@ io.on('connection', function(socket){
     socket.on('checkUser',async function(message){
         console.log("////// GOT MESSAGE : checkUser //////");
         console.log(message);
-
         message = JSON.parse(message);
         let ret = await userManager.isInDataBase(message.userName);  
         socket.emit('checkUser', JSON.stringify({userName: ret}));
+        console.log(ret);
     });
 
     //Recup la liste des urls d'un chapitre et la renvoie
@@ -92,6 +92,7 @@ io.on('connection', function(socket){
 
         message = JSON.parse(message);
         let jsonBiblio = await libraryManager.getLibraryByUser(message.userName);
+        console.log(jsonBiblio);
         socket.emit('recupDernieresSorties',JSON.stringify(jsonBiblio));
     });
 

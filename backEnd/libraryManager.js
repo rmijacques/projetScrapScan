@@ -17,12 +17,11 @@ module.exports = {
         let userLibrary = usersData.find((elem) => {
             return elem.name == userName;
         });
-        //console.log("UserLib : " + JSON.stringify(userLibrary));
 
         //Va chercher dans la librairie tout les chapitres existant que le user suit
         userLibrary.mangaList.forEach((elem) => {
             let mangaName = tools.formatMangaName(elem.name);
-            //console.log(mangaName);
+
             let manga = library.find((elem) => {
                 return elem.name == mangaName;
             });
@@ -78,6 +77,7 @@ module.exports = {
         }
     },
     updateMangaLibrary : function(mangaName, chapterNum, nbPages) {
+        mangaName = tools.formatMangaName(mangaName);
         let srcPages = [];
         let parsedChapterNum = parseInt(chapterNum, 10);
         let addrPage = "temp/" + mangaName + "/" + chapterNum + "/";

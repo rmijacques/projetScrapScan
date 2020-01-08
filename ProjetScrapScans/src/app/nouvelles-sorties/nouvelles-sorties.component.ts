@@ -22,6 +22,7 @@ export class NouvellesSortiesComponent implements OnInit {
 
     this._socketService.getObservable("recupDernieresSorties").subscribe((message)=> {
       this.toutesLesSorties = JSON.parse(message);
+      console.log(this.toutesLesSorties);
     });
   }
 
